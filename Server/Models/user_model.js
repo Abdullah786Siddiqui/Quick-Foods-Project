@@ -21,13 +21,18 @@ const userSchema = new Schema({
     },
     gender: {
         type: String,
-        enum: ["male", "female", "other"]
+        enum: ["male", "female", "other"],
+        default: null
     },
     phone: {
-        type: String
+        type: String,
+        default: null
+
     },
     avatar: {
-        type: String
+        type: String,
+        default: null
+
     }
 
 

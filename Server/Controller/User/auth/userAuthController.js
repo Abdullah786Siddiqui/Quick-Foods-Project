@@ -1,33 +1,37 @@
 // controllers/userAuthController.js
-const User = require("../models/User");
+const User = require("../../../Models/user_model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// SIGNUP
+
+
+
+// // SIGNUP
 exports.signup = async (req, res) => {
   try {
-    const { name, email, password, phone_number } = req.body;
+    const { username, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).json({ message: "Email already exists", success: false });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      name,
+    const user = new User({
+      username,
       email,
-      phone_number,
       password: hashedPassword,
     });
 
+    await user.save();
+
     res.status(201).json({
-      message: "User registered successfully",
+      message: "User Signup successfully",
       user,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message , message: "Internal Server Error" });
   }
 };
 
@@ -46,15 +50,17 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: "user" },
+    const JwtToken = jwt.sign(
+      { id: user._id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "24h" }
     );
 
-    res.json({
-      message: "Login successful",
-      token,
+    res.status(200).json({
+      message: "Login successfuly",
+      token: JwtToken,
+      name: user.username,
+      email: user.email
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
