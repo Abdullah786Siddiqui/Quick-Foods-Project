@@ -1,6 +1,3 @@
-// src/routes/index.tsx
-import { createBrowserRouter } from "react-router-dom";
-
 // Admin
 import AdminDashboard from "@/layouts/admin_layout/app";
 import Users from "@/pages/admin/Users/users";
@@ -10,7 +7,7 @@ import Delivery from "@/pages/admin/delivery/delivery";
 import AdminLogin from "@/layouts/admin_layout/auth/login";
 import AdminSignup from "@/layouts/admin_layout/auth/signup";
 
-export const adminRouter = createBrowserRouter([
+export const adminRoutes = [
   {
     path: "/admin",
     children: [
@@ -27,4 +24,4 @@ export const adminRouter = createBrowserRouter([
       },
     ],
   },
-]);
+];

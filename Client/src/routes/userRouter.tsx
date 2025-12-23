@@ -1,12 +1,11 @@
 // routes/userRouter.tsx
-import { createBrowserRouter } from "react-router-dom";
 import UserLogin from "@/layouts/user_Layout/auth/login";
 import UserSignup from "@/layouts/user_Layout/auth/signup";
 import UserLayout from "@/layouts/user_Layout/app";
 import UserHome from "@/pages/user/home/home";
 
 
-export const userRouter = createBrowserRouter([
+export const userRoutes = [
   {
     path: "/user",
     children: [
@@ -21,4 +20,4 @@ export const userRouter = createBrowserRouter([
       },
     ],
   },
-]);
+];

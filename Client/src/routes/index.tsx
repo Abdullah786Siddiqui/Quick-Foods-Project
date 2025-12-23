@@ -1,7 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
-import { adminRouter } from "./adminRouter";
+import { adminRoutes } from "./adminRouter";
+import { userRoutes } from "./userRouter";
+import { deliveryRoutes } from "./deliveryRouter";
+import { restaurantRoutes } from "./restaurantRouter";
 
 
 export const rootRouter = createBrowserRouter([
-  ...adminRouter.routes,
+  ...adminRoutes,
+  ...userRoutes,
+  ...deliveryRoutes,
+  ...restaurantRoutes
 ]);
