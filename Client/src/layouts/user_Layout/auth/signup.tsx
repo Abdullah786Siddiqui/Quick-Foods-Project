@@ -3,7 +3,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import api from '../../../Api/api';
 import { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 interface SignupFormInputs {
@@ -22,6 +22,8 @@ const UserSignup = () => {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  
+ 
 
 
   const {
@@ -29,6 +31,8 @@ const UserSignup = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<SignupFormInputs>();
+
+  
 
   const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
     setLoading(true);

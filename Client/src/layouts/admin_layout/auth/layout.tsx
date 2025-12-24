@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 
 
-const UserAuthLayout = () => {
+const AdminAuthLayout = () => {
   return (
     <>
       {/* Centered content for login/signup */}
@@ -12,4 +12,4 @@ const UserAuthLayout = () => {
   );
 };
 
-export default UserAuthLayout;
+export default AdminAuthLayout;

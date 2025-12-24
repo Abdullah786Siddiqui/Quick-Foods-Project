@@ -5,7 +5,6 @@ import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from '../../../Api/api';
 import { AxiosError } from "axios";
-
 interface LoginFormInputs {
   email: string;
   password: string;
@@ -13,7 +12,7 @@ interface LoginFormInputs {
 
 interface LoginResponse {
   message: string;
-  name: string;
+  user: object;
   token?: string;
 }
 
@@ -21,8 +20,12 @@ const UserLogin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+
+
+
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
 
+  
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     setLoading(true);
     try {
@@ -32,8 +35,11 @@ const UserLogin = () => {
           style: { background: 'white', color: 'green' },
         });
         // Save token if needed
-        localStorage.setItem('token', response.data.token || '');
-        localStorage.setItem('loggedInUser', response.data.name || '');
+        localStorage.setItem('user_token', response.data.token || '');
+        localStorage.setItem("user_auth", JSON.stringify({
+          role: "user",
+          user: response.data.user || ''
+        }));
         setTimeout(() => {
           navigate('/'); // Change to your user dashboard route
         }, 1000);

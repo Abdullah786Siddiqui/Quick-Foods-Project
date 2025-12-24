@@ -17,6 +17,9 @@ createRoot(document.getElementById("root")!).render(
         duration: 1000,
       }}
     />
-    <RouterProvider router={rootRouter} />
+
+      <RouterProvider router={rootRouter} />
+    
+    
   </>
 );

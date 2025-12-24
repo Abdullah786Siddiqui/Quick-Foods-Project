@@ -1,24 +1,39 @@
-import AuthLayout from "@/layouts/user_Layout/auth/layout";
+
 import UserLogin from "@/layouts/user_Layout/auth/login";
 import UserSignup from "@/layouts/user_Layout/auth/signup";
 import UserLayout from "@/layouts/user_Layout/app";
 import UserHome from "@/pages/user/home/home";
+import Checkout from "@/pages/user/checkout/checkout";
+import PrivateRoute from "./specialRoutes/privateRoutes";
+import ProtectedRoute from "./specialRoutes/protectedRoutes";
+import UserAuthLayout from "@/layouts/user_Layout/auth/layout";
 
 export const userRoutes = [
   {
     path: "/",
     children: [
       {
-        element: <AuthLayout />,
+        element: (
+          <ProtectedRoute role="user" route="">
+         <UserAuthLayout />
+          </ProtectedRoute>
+        ),
         children: [
           { path: "login", element: <UserLogin /> },
           { path: "signup", element: <UserSignup /> },
         ],
       },
       {
-        element: <UserLayout />, // protected layout
+        // Public Routes Any User Authenticated or not
+        element: <UserLayout />,
         children: [
-          { index: true, element: <UserHome /> },
+         { index: true, element: <UserHome /> },
+          {
+            // Private Routes Any User Authenticated  or not
+            element: <PrivateRoute route=""  role="user"/> 
+            , children: [
+              { path: "checkout", element: <Checkout /> }
+            ]},
         ],
       },
     ],

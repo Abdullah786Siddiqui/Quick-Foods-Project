@@ -31,7 +31,7 @@ exports.signup = async (req, res) => {
       user,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message , message: "Internal Server Error" });
+    res.status(500).json({ error: error.message, message: "Internal Server Error" });
   }
 };
 
@@ -51,16 +51,23 @@ exports.login = async (req, res) => {
     }
 
     const JwtToken = jwt.sign(
-      { id: user._id, email: user.email },
+      {
+        id: user._id,
+        email: user.email,
+        role: "user",
+      },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
 
+
     res.status(200).json({
       message: "Login successfuly",
       token: JwtToken,
-      name: user.username,
-      email: user.email
+      user: {
+        name: user.username,
+        email: user.email,
+      },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
