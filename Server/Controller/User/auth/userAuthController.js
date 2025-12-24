@@ -66,3 +66,9 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// LOGOUT
+exports.logout = (req, res) => {
+  // Since JWT is stateless, logout can be handled on the client side by deleting the token.
+  res.status(200).json({ message: "Logout successfully" });
+};
