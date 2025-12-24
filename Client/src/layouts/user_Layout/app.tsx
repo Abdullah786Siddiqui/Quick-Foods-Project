@@ -1,14 +1,47 @@
-// layouts/user_layout/UserLayoutUI.tsx
-import { Outlet } from "react-router-dom";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const UserLayout = () => {
+  const navigate = useNavigate();
+  const storedUsername = localStorage.getItem('loggedInUser') ?? '';
+  const [username] = useState<string>(storedUsername);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = () => {
+    setLoggingOut(true); // disable button
+    localStorage.removeItem('token');
+    localStorage.removeItem('loggedInUser');
+    toast.success('Logged out successfully!',{
+      style: { background: 'white', color: 'red' },
+    });
+    setTimeout(() => {
+      navigate('/login');
+    }, 1000);
+  }
+
   return (
+<>
+
+  
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="bg-blue-600 text-white p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">User Dashboard</h1>
-        <button className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded">
-          Logout
+      <header className="bg-blue-600 text-white p-4 flex flex-col sm:flex-row justify-between items-center shadow-md">
+        <div className="flex items-center space-x-4 mb-2 sm:mb-0">
+          <h1 className="text-2xl font-bold">User Dashboard</h1>
+          <span className="bg-blue-500 px-3 py-1 rounded-full text-sm font-medium shadow-inner">
+            {username || 'Guest'}
+          </span>
+        </div>
+
+        <button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className={`px-4 py-2 rounded shadow-md transition-colors duration-300
+            ${loggingOut ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'}
+          `}
+        >
+          {loggingOut ? 'Logging out...' : 'Logout'}
         </button>
       </header>
 
@@ -17,6 +50,7 @@ const UserLayout = () => {
         <Outlet />
       </main>
     </div>
+    </>
   );
 };
 
