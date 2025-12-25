@@ -32,7 +32,7 @@ const AdminLogin = () => {
       const response = await api.post<LoginResponse>('/auth/admin/login', data);
       if (response.status === 200) {
         toast.success(response.data.message || 'Login successfully!', {
-          style: { background: 'white', color: 'green' },
+          style: { background: 'white', color: 'purple' },
         });
         // Save token if needed
         localStorage.setItem('admin_token', response.data.token || '');
@@ -97,14 +97,14 @@ const AdminLogin = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full p-2 rounded text-white transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}`}
+            className={`w-full p-2 rounded text-white transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"}`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
 
           <p className="mt-4 text-center text-gray-600">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-green-600 hover:underline">
+            <Link to="/signup" className="text-purple-600 hover:underline">
               Signup
             </Link>
           </p>

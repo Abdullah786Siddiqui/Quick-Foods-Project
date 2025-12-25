@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const restaurantSchema = new Schema(
     {
-        name: {
+        username: {
             type: String,
             required: true,
         },

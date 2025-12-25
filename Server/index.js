@@ -5,7 +5,7 @@ const cors = require('cors');
 const userAuthRoutes = require('./Routes/User/userAuthRoutes');
 const userRoutes = require('./Routes/User/userRoutes');
 const adminAuthRoutes = require('./Routes/Admin/adminAuthRoutes');
-
+const restaurantAuthRoutes = require('./Routes/Restaurant/restaurantAuthRoutes');
 
 const connectDB = require('./config/db');
 const port = process.env.PORT || 3000;
@@ -19,6 +19,9 @@ app.use('/api/user', userRoutes);
 
 // Admin Routes
 app.use('/api/auth', adminAuthRoutes);
+
+// Restaurant Routes
+app.use('/api/auth', restaurantAuthRoutes);
 
 
 

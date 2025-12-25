@@ -1,25 +1,41 @@
 import { usePageTitle } from "@/components/shared/hooks"
-import { Bell, Sun, ArrowRight } from "@/components/shared/icons"
-import { Input, Dialog, SidebarProvider   ,SidebarInset, SidebarTrigger ,DialogContent, Separator} from "@/components/shared/ui"
+import {
+  Bell, Sun, LayoutDashboard,
+  Users,
+  ShoppingCart,
+  Store,
+  Truck,
+  BarChart3,
+  CreditCard,
+  Tag,
+  UtensilsCrossed
+} from "@/components/shared/icons"
+import { Input, Dialog, SidebarProvider, SidebarInset, SidebarTrigger, DialogContent, Separator } from "@/components/shared/ui"
 import { AppSidebar, AppBreadcrumb } from "@/components/shared/layout"
-import { cn } from "@/lib/utils"
 import { Outlet } from "@/components/shared/router"
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@radix-ui/react-navigation-menu"
+import {
 
+} from "lucide-react"
 
 const AdminDashboard = () => {
   usePageTitle("dashboard");
-  const sidebarItems = [
-    { name: "Dashboard", active: true },
-    { name: "Orders", active: false },
-    { name: "Products", active: false },
-    { name: "Customers", active: false },
+  const adminSidebarItems = [
+    { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+    { title: "Users", url: "/admin/users", icon: Users },
+    { title: "Orders", url: "/admin/orders", icon: ShoppingCart },
+    { title: "Restaurant Partners", url: "/admin/restaurant", icon: Store },
+    { title: "Delivery Partners", url: "/admin/delivery", icon: Truck },
+    { title: "Menu", url: "/admin/menu", icon: UtensilsCrossed },
+    { title: "Promotions", url: "#", icon: Tag },
+    { title: "Payments", url: "#", icon: CreditCard },
+    { title: "Reports", url: "#", icon: BarChart3 },
   ]
+
 
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar panelName="Admin" navItems={adminSidebarItems} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 px-4  transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 ">
           <SidebarTrigger className="-ml-1" />
@@ -39,33 +55,7 @@ const AdminDashboard = () => {
               />
 
               {/* Sidebar-like Navigation */}
-              <div className="w-full p-4 bg-white border rounded-md">
-                <p className="text-sm text-muted-foreground mb-4">Pages</p>
-                <NavigationMenu orientation="vertical">
-                  <NavigationMenuList className="flex flex-col space-y-1">
-                    {sidebarItems.map((item) => (
-                      <NavigationMenuItem
-                        key={item.name}
-                        className="w-full md:w-[430px]"
-                      >
-                        <NavigationMenuLink
-                          className={cn(
-                            "flex items-center flex-row justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                            item.active
-                              ? "bg-muted text-foreground"
-                              : "hover:bg-muted text-muted-foreground"
-                          )}
-                        >
-                          <div className="flex gap-3">
-                            <ArrowRight className="w-4 h-4" />
-                            {item.name}
-                          </div>
-                        </NavigationMenuLink>
-                      </NavigationMenuItem>
-                    ))}
-                  </NavigationMenuList>
-                </NavigationMenu>
-              </div>
+
 
             </DialogContent>
           </Dialog>

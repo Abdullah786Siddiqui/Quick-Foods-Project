@@ -10,6 +10,7 @@ import AdminLogin from "@/layouts/admin_layout/auth/login";
 import PrivateRoute from "./specialRoutes/privateRoutes";
 import ProtectedRoute from "./specialRoutes/protectedRoutes";
 import AdminAuthLayout from "@/layouts/admin_layout/auth/layout";
+import Menu from "@/pages/admin/Menu/menu";
 
 export const adminRoutes = [
   {
@@ -39,6 +40,8 @@ export const adminRoutes = [
               { path: "users", element: <Users /> },
               { path: "restaurant", element: <Restaurant /> },
               { path: "delivery", element: <Delivery /> },
+              { path: "menu", element: <Menu /> },
+
             ],
           },
         ],
