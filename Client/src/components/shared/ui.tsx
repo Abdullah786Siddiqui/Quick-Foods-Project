@@ -33,3 +33,7 @@ export {
   CardContent,
   CardFooter,
 } from "@/components/ui/card"
+
+export{
+   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
+} from "@/components/ui/select"

@@ -5,6 +5,5 @@ const checkJwtToken = require('../../Middleware/check_token');
 
 // GET current user info
 router.get('/me', checkJwtToken, userController.me);
-    
 
 module.exports = router;

@@ -3,7 +3,6 @@
 // Admin Pages
 import AdminDashboard from "@/layouts/admin_layout/app";
 import Users from "@/pages/admin/Users/users";
-import Analytics from "@/pages/admin/Dashboard/analytics";
 import Restaurant from "@/pages/admin/restaurant/restaurant";
 import Delivery from "@/pages/admin/delivery/delivery";
 import AdminLogin from "@/layouts/admin_layout/auth/login";
@@ -11,6 +10,7 @@ import PrivateRoute from "./specialRoutes/privateRoutes";
 import ProtectedRoute from "./specialRoutes/protectedRoutes";
 import AdminAuthLayout from "@/layouts/admin_layout/auth/layout";
 import Menu from "@/pages/admin/Menu/menu";
+import Dashboard from "@/pages/admin/Dashboard/dashboard";
 
 export const adminRoutes = [
   {
@@ -36,7 +36,7 @@ export const adminRoutes = [
           {
             element: <AdminDashboard />,
             children: [
-              { index: true, element: <Analytics /> },
+              { index: true, element: <Dashboard /> },
               { path: "users", element: <Users /> },
               { path: "restaurant", element: <Restaurant /> },
               { path: "delivery", element: <Delivery /> },

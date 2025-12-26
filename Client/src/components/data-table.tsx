@@ -1,312 +1,153 @@
-"use client"
-
-import * as React from "react"
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shared/ui";
+  import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@example.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@example.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@example.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@example.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@example.com",
-  },
-]
-
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
+interface User {
+  id: number;
+  username: string;
+  phone: string;
+  status: "Online" | "Offline";
+  city: string;
+  gender: string;
+  email: string;
+  avatar?: string;
 }
 
-export const  columns:  ColumnDef<Payment>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
 
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
 
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
-
-export function DataTableDemo() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-    },
-  })
+const DataTable = ({ data  }: { data: User[] }) => {
+  
 
   return (
-    <div className="w-full">
-      <div className="flex items-center p-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className="p-6">
+      {/* Top controls */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+        {/* Search */}
+     
+
+
+    <div className="flex w-full max-w-sm items-center gap-2">
+      <Input type="email" placeholder="Type to search users..." />
+      <Button type="submit" variant="outline">
+Search      </Button>
+    </div>
+
+
+        {/* Status Filter */}
+       <Select>
+  <SelectTrigger className="w-full max-w-sm">
+    <SelectValue placeholder="Status" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="All">All</SelectItem>
+    <SelectItem value="Online">Online</SelectItem>
+    <SelectItem value="Offline">Offline</SelectItem>
+  </SelectContent>
+</Select>
       </div>
-      <div className="overflow-hidden rounded-md border mx-4">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 p-4">
-        <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+
+      {/* Table */}
+   <div className="overflow-x-auto">
+  <table className="w-full text-sm text-left text-gray-500 border border-gray-200 rounded-lg">
+    <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th className="px-4 py-3">
+          <input
+            type="checkbox"
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+          />
+        </th>
+        <th className="px-6 py-3">Name</th>
+        <th className="px-6 py-3">Phone</th>
+        <th className="px-6 py-3">Status</th>
+        <th className="px-6 py-3">City</th>
+        <th className="px-6 py-3">Gender</th>
+        <th className="px-6 py-3">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {data.length > 0 ? (
+        data.map((user) => (
+          <tr
+            key={user.id}
+            className="bg-white border-b border-gray-200 hover:bg-gray-50 transition-all duration-200"
           >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+            <td className="px-4 py-3">
+              <input
+                type="checkbox"
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
+              />
+            </td>
+
+            {/* Profile + Name + Email */}
+            <td className="px-6 py-3">
+              <div className="flex items-center gap-3">
+                <img
+                  src={user.avatar || "https://i.pravatar.cc/40"}
+                  alt={user.username}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <div className="flex flex-col leading-tight">
+                  <p className="text-sm font-semibold text-gray-900">
+                    {user.username}
+                  </p>
+                  <p className="text-xs text-gray-500">{user.email}</p>
+                </div>
+              </div>
+            </td>
+
+            <td className="px-6 py-3">{user.phone || "Required"}</td>
+
+            {/* Status with Badge */}
+            <td className="px-6 py-3 flex items-center gap-2">
+              <span
+                className={`h-2.5 w-2.5 rounded-full ${
+                  user.status === "Online" ? "bg-green-500" : "bg-red-500"
+                }`}
+              ></span>
+              <span className="text-sm">{user.status}</span>
+            </td>
+
+            <td className="px-6 py-3">{user.city || "Required"}</td>
+            <td className="px-6 py-3">{user.gender || "Required"}</td>
+
+            {/* Actions */}
+            <td className="px-6 py-3 flex space-x-2">
+              <button className="px-3 py-1.5 bg-blue-100 text-blue-800 rounded hover:bg-blue-200 text-xs font-semibold transition">
+                Edit
+              </button>
+              <button className="px-3 py-1.5 bg-red-100 text-red-800 rounded hover:bg-red-200 text-xs font-semibold transition">
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan={7} className="text-center py-4 text-gray-500">
+            No data found.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
+
+      {/* Pagination */}
+      <div className="flex justify-end mt-4 space-x-2">
+        <button className="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50">
+          Previous
+        </button>
+        <button className="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100">1</button>
+        <button className="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100">2</button>
+        <button className="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100">3</button>
+        <button className="px-3 py-1 rounded border border-gray-300 hover:bg-gray-100">
+          Next
+        </button>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default  DataTable ;

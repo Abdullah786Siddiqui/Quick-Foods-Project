@@ -6,7 +6,7 @@ import PrivateRoute from "./specialRoutes/privateRoutes";
 import ProtectedRoute from "./specialRoutes/protectedRoutes";
 import RestaurantAuthLayout from "@/layouts/restaurant_layout/auth/layout";
 import RestaurantDashboard from "@/layouts/restaurant_layout/app";
-import Analytics from "@/pages/restaurant/Dashboard/Analytics";
+import Dashboard from "@/pages/restaurant/Dashboard/dashboard";
 
 export const restaurantRoutes = [
   {
@@ -32,7 +32,7 @@ export const restaurantRoutes = [
           {
             element: <RestaurantDashboard />,
             children: [
-              { index: true, element: <Analytics /> },
+              { index: true, element: <Dashboard /> },
               
             ],
           },

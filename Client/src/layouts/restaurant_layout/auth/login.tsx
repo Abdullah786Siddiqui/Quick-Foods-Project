@@ -40,9 +40,9 @@ const RestaurantLogin = () => {
           role: "restaurant",
           restaurant: response.data.restaurant || ''
         }));
-        setTimeout(() => {
+        // setTimeout(() => {
           navigate('/restaurant'); // Change to your restaurant dashboard route
-        }, 1000);
+        // }, 1000);
       } else {
         toast.error('Login failed. Please try again.');
       }
@@ -104,7 +104,7 @@ const RestaurantLogin = () => {
 
           <p className="mt-4 text-center text-gray-600">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-green-600 hover:underline">
+            <Link to={'/restaurant/login'} className="text-green-600 hover:underline">
               Signup
             </Link>
           </p>

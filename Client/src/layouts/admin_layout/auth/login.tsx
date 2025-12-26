@@ -40,9 +40,9 @@ const AdminLogin = () => {
           role: "admin",
           admin: response.data.admin || ''
         }));
-        setTimeout(() => {
+        // setTimeout(() => {
           navigate('/admin'); // Change to your admin dashboard route
-        }, 1000);
+        // }, 1000);
       } else {
         toast.error('Login failed. Please try again.');
       }
@@ -104,7 +104,7 @@ const AdminLogin = () => {
 
           <p className="mt-4 text-center text-gray-600">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-purple-600 hover:underline">
+            <Link to={'/admin/login'} className="text-green-600 hover:underline">
               Signup
             </Link>
           </p>

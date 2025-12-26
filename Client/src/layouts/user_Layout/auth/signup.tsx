@@ -42,9 +42,9 @@ const UserSignup = () => {
         toast.success(response.data.message || 'Signup successfully!', {
           style: { background: 'white', color: 'green' },
         });
-        setTimeout(() => {
+        // setTimeout(() => {
           navigate('/login');
-        }, 1000); // 1.5 seconds delay
+        // }, 1000); // 1.5 seconds delay
       } else {
         toast.error('Signup failed. Please try again.');
       }

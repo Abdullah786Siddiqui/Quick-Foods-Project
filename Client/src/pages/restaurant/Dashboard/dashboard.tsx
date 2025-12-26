@@ -1,13 +1,11 @@
-import { Outlet } from 'react-router-dom'
+import { SectionCards } from '@/components/section-cards'
 
 const Dashboard = () => {
     return (
         <>
-            <div>Restaurant Dashboard</div>
-            <p>sidebar</p>
-            <main>
-                <Outlet />
-            </main>
+            <div className="flex flex-1 flex-col gap-4 ">
+                     <SectionCards />
+                 </div>
         </>
     )
 }
