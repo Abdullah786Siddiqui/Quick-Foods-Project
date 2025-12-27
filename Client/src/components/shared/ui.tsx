@@ -13,6 +13,11 @@ export {
 export {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogClose,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog"
 
 export {
@@ -34,6 +39,6 @@ export {
   CardFooter,
 } from "@/components/ui/card"
 
-export{
-   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
+export {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select"
