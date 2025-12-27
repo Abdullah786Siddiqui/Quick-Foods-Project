@@ -9,16 +9,11 @@ const adminRoutes = require('./Routes/Admin/adminRoutes');
 const restaurantAuthRoutes = require('./Routes/Restaurant/restaurantAuthRoutes');
 
 const connectDB = require('./config/db');
-const port = process.env.PORT || 3000;
-
+const port =  3000;
 
 
 app.use(express.json());
-app.use(cors({
-  origin: "https://quick-foods-project-svwl-equ0hzlnl.vercel.app",
-  credentials: true
-}));
-
+app.use(cors());
 // User Routes
 app.use('/api/auth', userAuthRoutes);
 app.use('/api/user', userRoutes);

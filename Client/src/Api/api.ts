@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://quick-foods-project-dn7w.vercel.app/", 
+  baseURL: "http://127.0.0.1:3000/api", 
   headers: {
     "Content-Type": "application/json",
   },
