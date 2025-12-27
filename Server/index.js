@@ -13,7 +13,11 @@ const port =  3000;
 
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "https://quick-foods-project-svwl-equ0hzlnl.vercel.app",
+  credentials: true
+}));
+
 // User Routes
 app.use('/api/auth', userAuthRoutes);
 app.use('/api/user', userRoutes);
