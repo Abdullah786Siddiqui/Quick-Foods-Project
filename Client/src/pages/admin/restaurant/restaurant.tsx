@@ -1,4 +1,4 @@
-import DataTable from '@/components/data-table'
+// import DataTable from '@/components/data-table'
 import { SectionCards } from '@/components/section-cards'
 import usePageTitle from '@/hooks/usePageTitle';
 
@@ -9,7 +9,7 @@ const Restaurant = () => {
     <>
          <div className="flex flex-1 flex-col gap-4 ">
            <SectionCards />
-         <DataTable />
+         {/* <DataTable /> */}
    
          </div>
        </>
