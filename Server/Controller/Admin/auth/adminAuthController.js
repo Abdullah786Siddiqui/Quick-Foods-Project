@@ -57,7 +57,7 @@ exports.login = async (req, res) => {
     if (!admin) {
       return res.status(401).json({
         success: false,
-        message: "Invalid credentials",
+        message: "Invalid Email",
       });
     }
 
@@ -65,7 +65,7 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Invalid credentials",
+        message: "Invalid password",
       });
     }
 
