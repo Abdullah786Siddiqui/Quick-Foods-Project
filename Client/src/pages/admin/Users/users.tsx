@@ -1,12 +1,16 @@
 import usePageTitle from '@/hooks/usePageTitle';
 import DataTable from '@/components/data-table';
-import { useQuery } from '@tanstack/react-query';
-import { Mail, MapPin, User , Edit2 } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Mail, MapPin, Edit2 } from "lucide-react";
 import api from '@/Api/api';
 import { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Input } from '@/components/shared/ui';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/shared/ui';
+import { Dialog, DialogContent } from '@/components/shared/ui';
 import { Button } from '@/components/ui/button';
+import { DialogTitle } from '@radix-ui/react-dialog';
+import { useForm, type SubmitHandler } from "react-hook-form";
+import toast from 'react-hot-toast';
+
 interface UserData {
   _id: string;
   username: string;
@@ -26,16 +30,32 @@ interface UserData {
     longitude: number;
   };
 }
+type FormInputs = {
+  phone: string;
+  gender: string;
+  email: string;
+
+  address: string;
+  city: string;
+  province: string;
+  country: string;
+};
+
 type StatusFilter = "All" | "active" | "inactive" | "blocked";
 
 const Users = () => {
   usePageTitle("User");
 
+  const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
   const [limit] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setloading] = useState(false)
 
 
   // Debouncing: searchQuery ki value 500ms delay ke baad update hoti hai
@@ -64,13 +84,121 @@ const Users = () => {
       };
     },
 
-    staleTime: 300000,
-    gcTime: 300000
+
+    gcTime: 3000000
   });
 
-  const headers = ["Name", "Phone", "Status", "City", "Gender", "Actions"];
+  const headers = ["Name", "Phone","Age", "Status", "City", "Gender", "Actions"];
 
 
+
+
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, dirtyFields }
+  } = useForm<FormInputs>();
+
+  // const watchedValues = watch();
+
+  // useEffect(() => {
+  //   console.log("WATCHING 👉", watchedValues);
+  // }, [watchedValues]);
+
+
+  useEffect(() => {
+    if (selectedUser) {
+      reset({
+        phone: selectedUser.phone || "",
+        gender: selectedUser.gender || "",
+        email: selectedUser.email || "",
+
+        address: selectedUser.location?.address || "",
+        city: selectedUser.location?.city || "",
+        province: selectedUser.location?.province || "",
+
+      });
+    }
+  }, [selectedUser, reset]);
+
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    const changedData: Partial<FormInputs> = {};
+
+    // 1. Collect only fields that have actually been modified
+    Object.keys(dirtyFields).forEach((key) => {
+      changedData[key as keyof FormInputs] = data[key as keyof FormInputs];
+    });
+
+
+
+    // 3. Separate location fields and construct final payload
+    const locationKeys = ["address", "city", "province"];
+    const locationData: any = {};
+    const userData: any = {};
+
+    Object.entries(changedData).forEach(([key, value]) => {
+      if (locationKeys.includes(key)) {
+        locationData[key] = value;
+      } else {
+        userData[key] = value;
+      }
+    });
+
+    // Construct final data object
+    const finalData: any = { ...userData };
+
+    // Only add location object if at least one location field changed
+    if (Object.keys(locationData).length > 0) {
+      finalData.location = locationData;
+    }
+
+    // 2. Check if there are any changes at all
+    if (Object.keys(changedData).length === 0) {
+
+      setOpenDialog(false);
+      toast.error("Nothing to update");
+      setIsEditing(false);// Showing error or info toast
+      return; // Stop execution here
+    }
+
+    // 4. Trigger the mutation
+    updateUserMutation.mutate(finalData);
+  };
+
+  const updateUserMutation = useMutation({
+    mutationFn: async (updatedData: Partial<FormInputs>) => {
+      setloading(true)
+
+
+      if (!selectedUser?._id) throw new Error("No user selected");
+      const response = await api.patch(`/admin/user/update/${selectedUser._id}`, updatedData);
+      return response.data;
+    },
+    onSuccess: () => {
+      setloading(false);
+      setIsEditing(false);
+      setOpenDialog(false);
+      toast.success("User Updated Successfully");
+      setSelectedUser(null);
+      // Update users cache for current page/status/search
+  queryClient.invalidateQueries({ queryKey: ['users'] });
+
+    },
+    onError: (err: any) => {
+      setloading(false);
+      console.error("Update failed:", err);
+    }
+  });
+
+  const handleCancle = () => {
+    setloading(false);
+    setIsEditing(false);
+    setOpenDialog(false);
+    setSelectedUser(null);
+
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4">
@@ -110,12 +238,16 @@ const Users = () => {
         isError={isError}
         renderRow={(user: UserData, index) => (
           <tr key={user._id ?? user.email ?? index} className="bg-white border-b border-gray-200 hover:bg-gray-50 transition-all duration-200">
-            <td className="px-4 py-3">
+            {/* <td className="px-4 py-3">
               <input type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded" />
-            </td>
+            </td> */}
             <td className="px-4 py-3">
               <div className="flex items-center gap-3">
-                <img src={user.avatar} alt={user.username} className="w-10 h-10 rounded-full object-cover" />
+<img
+  src={user.avatar || `https://github.com/${user.username}.png`}
+  alt={user.username}
+  className="w-10 h-10 rounded-full object-cover"
+/>
                 <div className="flex flex-col leading-tight">
                   <p className="text-sm font-semibold text-gray-900">{user.username}</p>
                   <p className="text-xs text-gray-500">{user.email}</p>
@@ -123,6 +255,8 @@ const Users = () => {
               </div>
             </td>
             <td className="px-6 py-3">{user.phone || "Required"}</td>
+            <td className="px-6 py-3">{user.age || 34}</td>
+
             <td className="px-6 py-3">
               <div className="flex items-center gap-2 h-full">
                 <span className={`h-2.5 w-2.5 rounded-full ${user.status === "active" ? "bg-green-500" : user.status === "inactive" ? "bg-red-500" : "bg-gray-500"}`}></span>
@@ -132,12 +266,7 @@ const Users = () => {
             <td className="px-6 py-3">{user.city || "Required"}</td>
             <td className="px-6 py-3">{user.gender || "Required"}</td>
             <td className="px-6 py-3 flex space-x-2 items-center h-full">
-              {/* Edit Button */}
-              <button
-                className="px-3 py-1.5 cursor-pointer bg-blue-100 text-blue-800 rounded hover:bg-blue-200 text-xs font-semibold transition"
-              >
-                Edit
-              </button>
+            
 
               {/* Delete Button */}
               <button
@@ -147,119 +276,202 @@ const Users = () => {
               </button>
 
 
-    <Dialog>
-  <DialogTrigger asChild>
-    <button className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 text-xs font-semibold shadow-sm transition-all active:scale-95">
-     More
-    </button>
-  </DialogTrigger>
 
-  <DialogContent
-    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:max-w-md h-fit max-h-[90vh] p-0 rounded-2xl border-none shadow-2xl bg-white flex flex-col overflow-hidden"
-  >
-    {/* FIXED: Visual Header */}
-    <div className="flex-shrink-0 h-24 sm:h-28 bg-gradient-to-r from-blue-600 to-indigo-700" />
-
-    {/* FIXED: Avatar & Identity */}
-    <div className="px-6 flex-shrink-0">
-      <div className="flex items-end gap-4 -mt-10 mb-4">
-        <div className="relative">
-          <img
-            src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
-            alt={user.username}
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-md bg-gray-100 object-cover"
-          />
-          <span className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>
-        </div>
-        <div className="mb-1">
-          <h2 className="text-xl font-bold text-gray-900 leading-tight">{user.username}</h2>
-          <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold uppercase rounded-md">
-            {user.status || "Member"}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    {/* SCROLLABLE: Contact Details & Info */}
-    <div className="px-6 overflow-y-auto custom-scrollbar flex-grow space-y-6">
-      <section>
-        <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2 sticky top-0 bg-white py-1">
-          <Mail className="w-3 h-3 text-blue-500" /> Contact Details
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-            <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Phone</p>
-            <p className="text-sm font-semibold text-gray-800">{user.phone || "N/A"}</p>
-          </div>
-          <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-            <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Gender</p>
-            <p className="text-sm font-semibold text-gray-800">{user.gender || "N/A"}</p>
-          </div>
-          <div className="sm:col-span-2 p-3 rounded-xl bg-gray-50 border border-gray-100">
-            <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Email Address</p>
-            <p className="text-sm font-semibold text-gray-800 truncate">{user.email}</p>
-          </div>
-        </div>
-      </section>
-
-    <section>
-  <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2 sticky top-0 bg-white py-1">
-    <MapPin className="w-3 h-3 text-indigo-500" /> Location Info
-  </h3>
-
-  {/* Address */}
-  <div className="p-4 rounded-xl bg-gray-50 border border-gray-100 mb-2">
-    <p className="text-sm text-gray-600 font-medium">Address:</p>
-    <p className="text-sm text-gray-700">{user.location?.address || "N/A"}</p>
-  </div>
-
-  {/* City & Province in one row */}
-  <div className="p-4 rounded-xl bg-gray-50 border border-gray-100 mb-2 flex justify-between gap-4">
-    <div className="flex-1">
-      <p className="text-sm text-gray-600 font-medium">City:</p>
-      <p className="text-sm text-gray-700">{user.location?.city || "N/A"}</p>
-    </div>
-    <div className="flex-1">
-      <p className="text-sm text-gray-600 font-medium">Province:</p>
-      <p className="text-sm text-gray-700">{user.location?.province || "N/A"}</p>
-    </div>
-  </div>
-
-  {/* Live Google Map Button */}
-  {user.location?.latitude && user.location?.longitude && (
-    <div className="p-4">
-      <a
-        href={`https://www.google.com/maps?q=${user.location.latitude},${user.location.longitude}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-full block text-center px-4 py-2 bg-indigo-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-600 transition"
-      >
-        View on Google Maps
-      </a>
-    </div>
-  )}
-</section>
+              <button
+                onClick={() => {
+                  setSelectedUser(user);  // set the clicked user
+                  setOpenDialog(true)
+                  setloading(false)
 
 
-    </div>
+                }}
+                className="px-4 py-2 cursor-pointer bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 text-xs font-semibold shadow-sm transition-all active:scale-95"
+              >
+                More
+              </button>
 
-    {/* FIXED: Action Footer */}
-    <div className="p-4 sm:px-6 flex-shrink-0 flex justify-end gap-3 border-t border-gray-100 bg-white">
-      <DialogTrigger asChild>
-        <Button variant="ghost" className="text-xs font-bold text-gray-500">Cancel</Button>
-      </DialogTrigger>
-      <Button className="text-xs font-bold h-10 px-6 bg-indigo-600 hover:bg-indigo-700">
-        <Edit2 className="w-3 h-3 mr-2" /> Edit Profile
-      </Button>
-    </div>
-  </DialogContent>
-</Dialog>
+
+
+
 
             </td>
 
           </tr>
         )}
       />
+      <Dialog
+        open={openDialog}
+        onOpenChange={(open) => {
+          setOpenDialog(open);
+          if (!open) {
+            setSelectedUser(null);
+            setIsEditing(false);
+            setloading(false)
+
+          }
+        }}
+      >
+
+
+        <DialogContent
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:max-w-md max-h-[90vh] p-0 rounded-2xl border-none shadow-2xl bg-white flex flex-col overflow-hidden"
+        >
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col h-full min-h-0"
+          >
+            {selectedUser && (
+              <>
+                {/* HEADER */}
+                <div className="flex-shrink-0 h-24 sm:h-28 bg-gradient-to-r from-blue-600 to-indigo-700" />
+
+                {/* AVATAR */}
+                <div className="px-6 flex-shrink-0">
+                  <div className="flex items-end gap-4 -mt-10 mb-4">
+                    <div className="relative">
+                     <img
+  src={
+    selectedUser.avatar || `https://github.com/${selectedUser.username}.png` || `https://ui-avatars.com/api/?name=${selectedUser.username}&background=random`
+  }
+  alt={selectedUser.username}
+  className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-md bg-gray-100 object-cover"
+/>
+
+                      <span className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
+                    </div>
+                    <div className="mb-1">
+                      <h2 className="text-xl font-bold text-gray-900 leading-tight">
+                        {selectedUser.username}
+                      </h2>
+                      <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold uppercase rounded-md">
+                        {selectedUser.status || "Member"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SCROLLABLE CONTENT */}
+                <div className="px-6 overflow-y-auto custom-scrollbar flex-grow space-y-6">
+                  {isEditing && (
+                    <p className="w-full text-center text-sm text-green-700 bg-green-100 rounded-md py-1 px-2 mb-2 font-medium">
+                      You can now update your profile ✨
+                    </p>
+                  )}
+
+
+                  {/* CONTACT */}
+                  <section>
+                    <DialogTitle className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2 sticky top-0 bg-white py-1">
+                      <Mail className="w-3 h-3 text-blue-500" />
+                      Contact Details
+                    </DialogTitle>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Phone</p>
+                        <input
+                          {...register("phone", {
+                            required: "Phone is required",
+                            minLength: { value: 10, message: "Minimum 10 digits" }
+                          })}
+                          readOnly={!isEditing}
+                          className="w-full bg-transparent outline-none text-sm"
+                        />
+                        {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone.message}</p>}
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Gender</p>
+                        <input
+                          {...register("gender", { required: "Gender is required" })}
+                          readOnly={!isEditing}
+                          className="w-full bg-transparent outline-none text-sm"
+                        />
+                        {errors.gender && <p className="text-xs text-red-500 mt-1">{errors.gender.message}</p>}
+                      </div>
+
+                      <div className="sm:col-span-2 p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Email</p>
+                        <input
+                          {...register("email", {
+                            required: "Email is required",
+                            pattern: { value: /^\S+@\S+$/i, message: "Invalid email" }
+                          })}
+                          readOnly={!isEditing}
+                          className="w-full bg-transparent outline-none text-sm"
+                        />
+                        {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* LOCATION */}
+                  <section>
+                    <DialogTitle className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2 sticky top-0 bg-white py-1">
+                      <MapPin className="w-3 h-3 text-indigo-500" />
+                      Location Info
+                    </DialogTitle>
+
+                    <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                      <p className="text-sm text-gray-600 font-medium">Address</p>
+                      <input
+                        {...register("address", { required: "Address is required" })}
+                        readOnly={!isEditing}
+                        className="w-full bg-transparent outline-none text-sm"
+                      />
+                      {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address.message}</p>}
+                    </div>
+
+                    <div className="flex gap-3 mt-3">
+                      <div className="flex-1 p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p className="text-sm text-gray-600 font-medium">City</p>
+                        <input
+                          {...register("city", { required: "City is required" })}
+                          readOnly={!isEditing}
+                          className="w-full bg-transparent outline-none text-sm"
+                        />
+                        {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city.message}</p>}
+                      </div>
+
+                      <div className="flex-1 p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p className="text-sm text-gray-600 font-medium">Province</p>
+                        <input
+                          {...register("province", { required: "Province is required" })}
+                          readOnly={!isEditing}
+                          className="w-full bg-transparent outline-none text-sm"
+                        />
+                        {errors.province && <p className="text-xs text-red-500 mt-1">{errors.province.message}</p>}
+                      </div>
+                    </div>
+                  </section>
+                </div>
+
+                {/* FOOTER */}
+                <div className="p-4 sm:px-6 flex-shrink-0 flex justify-end gap-3 border-t border-gray-100 bg-white">
+                  <Button type='button' onClick={handleCancle}>Cancel</Button>
+
+                  {!isEditing ? (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="flex items-center justify-center cursor-pointer h-10 px-4 sm:px-5 text-xs font-semibold bg-indigo-600 text-white rounded-lg shadow-sm hover:bg-indigo-700 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1"
+                    >
+                      <Edit2 className="w-4 h-4 mr-2" /> Edit Profile
+                    </button>
+
+                  ) : (
+                    <Button type="submit" className="h-10 px-5  text-xs cursor-pointer font-bold bg-green-600 hover:bg-green-700">
+                      {loading ? "Update Profile..." : "Update Profile"}
+                    </Button>
+                  )}
+                </div>
+              </>
+            )}
+          </form>
+        </DialogContent>
+
+
+
+      </Dialog>
 
       {/* Pagination */}
       <div className="flex justify-end mt-4 space-x-2 px-6">
@@ -283,7 +495,7 @@ const Users = () => {
 
 
 
-    </div>
+    </div >
   );
 };
 

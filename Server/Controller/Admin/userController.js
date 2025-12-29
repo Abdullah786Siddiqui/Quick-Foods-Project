@@ -51,8 +51,8 @@ exports.fetchAllUsers = async (req, res) => {
                             city: location.cityId?.cityName || null,
                             province: location.cityId?.provinceId?.provinceName || null,
                             country: location.country,
-                            latitude: location.latitude || null,   
-                            longitude: location.longitude || null  
+                            latitude: location.latitude || null,
+                            longitude: location.longitude || null
                         }
                         : null
                 };
@@ -74,4 +74,43 @@ exports.fetchAllUsers = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+
+
+exports.UpdateUser = async (req, res) => {
+    try {
+        const { id } = req.params; // user ID
+        const { location, ...userData } = req.body; // separate location from user fields
+
+        // 1️⃣ Update User
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { $set: userData },
+            { new: true, runValidators: true }
+        );
+
+        let updatedLocation = null;
+
+        // 2️⃣ Update or create location
+        if (location && Object.keys(location).length > 0) {
+            updatedLocation = await UserLocation.findOneAndUpdate(
+                { userId: id },
+                { $set: location },
+                { new: true, upsert: true, runValidators: true } // upsert = create if not exists
+            );
+        }
+
+        return res.status(200).json({
+            success: true,
+            user: updatedUser,
+            location: updatedLocation,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: "Update failed", error });
+    }
+};
+
+
 

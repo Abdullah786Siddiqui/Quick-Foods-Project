@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")!).render(
       position="top-center"
       reverseOrder={false}
       toastOptions={{
-        duration: 1000,
+        duration: 1500,
       }}
     />
     <QueryClientProvider client={queryClient}>

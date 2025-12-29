@@ -22,12 +22,7 @@ const DataTable = <T,>({
         <table className="w-full text-sm text-left text-gray-500 border border-gray-200 rounded-lg">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th className="px-4 py-3">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
-                />
-              </th>
+            
               {headers.map((header, i) => (
                 <th key={i} className="px-6 py-3">
                   {header}
