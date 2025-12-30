@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const path = require("path");
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-const connectDB = require("../config/db"); 
+const connectDB = require("../config/db");
 const Province = require("../Models/province_model");
 const City = require("../Models/city_model");
 const User = require("../Models/user_model");
@@ -12,6 +12,8 @@ const UserLocation = require("../Models/user_location_model");
 const Admin = require("../Models/admin_model");
 const Delivery = require("../Models/delivery_model");
 const Restaurant = require("../Models/restaurant_model");
+const RestaurantLocation = require('../Models/restautant_location_model')
+const RestaurantTiming = require('../Models/restaurant_timing_model')
 
 const seed = async () => {
   try {
@@ -26,6 +28,9 @@ const seed = async () => {
     await Admin.deleteMany({});
     await Delivery.deleteMany({});
     await Restaurant.deleteMany({});
+    await RestaurantLocation.deleteMany({});
+    await RestaurantTiming.deleteMany({});
+
 
     // 3️⃣ Seed Provinces
     const provinces = await Province.insertMany([
@@ -89,10 +94,9 @@ const seed = async () => {
 
     // 7️⃣ Seed Admins
     await Admin.insertMany([
-      { username: "Admin1", email: "admin1@example.com", password: hashedPassword },
-      { username: "Admin2", email: "admin2@example.com", password: hashedPassword }
+      { username: "Admin", email: "admin@gmail.com", password: hashedPassword }
     ]);
-    console.log("Admins seeded.");
+    console.log("Admin seeded.");
 
     // 8️⃣ Seed Deliveries
     await Delivery.insertMany([
@@ -122,11 +126,12 @@ const seed = async () => {
     console.log("Deliveries seeded.");
 
     // 9️⃣ Seed Restaurants
-    await Restaurant.insertMany([
+    const restaurants = await Restaurant.insertMany([
       {
         username: "FoodKing",
         email: "foodking@example.com",
         status: "active",
+        is_main: true,
         password: hashedPassword
       },
       {
@@ -137,6 +142,61 @@ const seed = async () => {
       }
     ]);
     console.log("Restaurants seeded.");
+
+    const RestaurantLocations= await RestaurantLocation.insertMany([
+      {
+        restaurant_id: restaurants[0]._id, // FoodKing
+        city_id: cities[1]._id,            // Lahore
+        province_id: provinces[1]._id,     // Punjab
+        address: "123 Main Street",
+        locality: "Downtown",
+        branch_email: "mainbranch@foodking.com",
+        branch_phone_number: "03001234567",
+        latitude: 31.5204,
+        longitude: 74.3587
+      },
+      {
+        restaurant_id: restaurants[0]._id, // FoodKing
+        city_id: cities[0]._id,            // Karachi
+        province_id: provinces[0]._id,     // Sindh
+        address: "456 Market Road",
+        locality: "Clifton",
+        branch_email: "branch2@foodking.com",
+        branch_phone_number: "03007654321",
+        latitude: 25.0150,
+        longitude: 67.0650
+      },
+      {
+        restaurant_id: restaurants[1]._id, // BurgerHouse
+        city_id: cities[1]._id,            // Lahore
+        province_id: provinces[1]._id,     // Punjab
+        address: "789 Burger Street",
+        locality: "Gulberg",
+        branch_email: "mainbranch@burgerhouse.com",
+        branch_phone_number: "03001112233",
+        latitude: 31.5210,
+        longitude: 74.3590
+      }
+    ]);
+
+    console.log("RestaurantLocations seeded.");
+
+    await RestaurantTiming.insertMany([
+  {
+    restaurant_location_id: RestaurantLocations[0]._id, // FoodKing Lahore branch
+    week_day: "Monday to Sunday",
+    opening_time: "09:00:00",
+    closing_time: "22:00:00"
+  },
+  {
+    restaurant_location_id: RestaurantLocations[1]._id, // BurgerHouse Lahore branch
+    week_day: "Monday to Sunday",
+    opening_time: "08:00:00",
+    closing_time: "21:00:00"
+  }
+]);
+    console.log("RestaurantTiming seeded.");
+
 
     console.log("✅ All seeding complete!");
     process.exit();

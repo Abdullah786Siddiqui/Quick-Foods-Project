@@ -11,19 +11,14 @@
     avatar: { type: String, default: null }
     }, { timestamps: true });
 
-    // ⚡ Cascade delete: user delete → user locations delete
-    userSchema.pre("findOneAndDelete", async function(next) {
-    try {
-        const filter = this.getQuery();
-        const userId = filter._id;
-        if (userId) {
-        const UserLocation = mongoose.model("UserLocation");
-        await UserLocation.deleteMany({ userId });
-        }
-        next();
-    } catch (err) {
-        next(err);
-    }
-    });
+   userSchema.pre("deleteOne", { document: true, query: false }, async function(next) {
+  try {
+    const UserLocation = mongoose.model("UserLocation");
+    await UserLocation.deleteMany({ userId: this._id });
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
     module.exports = model("User", userSchema);

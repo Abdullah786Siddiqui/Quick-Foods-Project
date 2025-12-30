@@ -1,7 +1,7 @@
 import usePageTitle from '@/hooks/usePageTitle';
 import DataTable from '@/components/data-table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Mail, MapPin, Edit2 } from "lucide-react";
+import { Mail, MapPin, Edit2, UserCheck, UserX, Package, CheckCircle, AlertTriangle } from "lucide-react";
 import api from '@/Api/api';
 import { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Input } from '@/components/shared/ui';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { useForm, type SubmitHandler } from "react-hook-form";
 import toast from 'react-hot-toast';
+import { SectionCards } from '@/components/section-cards';
 
 interface UserData {
   _id: string;
@@ -58,6 +59,8 @@ const Users = () => {
   const [loading, setloading] = useState(false)
 
 
+
+
   // Debouncing: searchQuery ki value 500ms delay ke baad update hoti hai
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -68,11 +71,12 @@ const Users = () => {
     return () => clearTimeout(handler); // cleanup on unmount or next change
   }, [searchQuery]);
 
+
+
   const { data, isPending, isError } = useQuery({
-    queryKey: ['users', currentPage, statusFilter, debouncedSearch],
+    queryKey: ['users', currentPage, statusFilter,statusFilter, debouncedSearch],
     queryFn: async () => {
       const response = await api.get(`/admin/users?page=${currentPage}&limit=${limit}&search=${debouncedSearch}`);
-
 
       const filteredUsers = statusFilter === "All"
         ? response.data.users
@@ -80,7 +84,8 @@ const Users = () => {
 
       return {
         users: filteredUsers,
-        pagination: response.data.pagination
+        pagination: response.data.pagination,
+        stats: response.data.stats
       };
     },
 
@@ -88,7 +93,9 @@ const Users = () => {
     gcTime: 3000000
   });
 
-  const headers = ["Name", "Phone","Age", "Status", "City", "Gender", "Actions"];
+  const headers = ["Name", "Phone", "Age", "Status", "City", "Gender", "Actions"];
+
+
 
 
 
@@ -101,11 +108,7 @@ const Users = () => {
     formState: { errors, dirtyFields }
   } = useForm<FormInputs>();
 
-  // const watchedValues = watch();
 
-  // useEffect(() => {
-  //   console.log("WATCHING 👉", watchedValues);
-  // }, [watchedValues]);
 
 
   useEffect(() => {
@@ -183,7 +186,7 @@ const Users = () => {
       toast.success("User Updated Successfully");
       setSelectedUser(null);
       // Update users cache for current page/status/search
-  queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
 
     },
     onError: (err: any) => {
@@ -200,8 +203,57 @@ const Users = () => {
 
   }
 
+  const UserImpData = [
+    {
+      title: "Total Users",
+      value: data?.stats?.totalUsers,
+      Icon: Package,
+      detail: "+120 this month",
+      detailColor: "text-fuchsia-500",
+      bgColor: "bg-fuchsia-100",
+    },
+    {
+      title: "Active Users",
+      value: data?.stats?.activeUsers,
+      Icon: CheckCircle,
+      detail: "34% of total",
+      detailColor: "text-green-500",
+      bgColor: "bg-green-100",
+    },
+    {
+      title: "InActive Users",
+      value: data?.stats?.inactiveUsers,
+      Icon: AlertTriangle,
+      detail: "128 need attention",
+      detailColor: "text-yellow-500",
+      bgColor: "bg-yellow-100",
+    },
+    // You can easily add more cards here
+  ];
+
   return (
-    <div className="flex flex-1 flex-col gap-4">
+    <div className="flex flex-1 flex-col gap-4 mb-4">
+      {isPending ? (
+        <div className="grid grid-cols-1 gap-4 px-4 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="animate-pulse">
+              <div className="p-4 rounded-xl bg-gray-100">
+                {/* Header Skeleton */}
+                <div className="flex justify-between items-center mb-2">
+                  <div className="h-4 w-24 bg-gray-300 rounded"></div>
+                  <div className="h-5 w-5 bg-gray-300 rounded-full"></div>
+                </div>
+                {/* Content Skeleton */}
+                <div className="h-10 w-16 bg-gray-300 rounded mb-1"></div>
+                <div className="h-3 w-32 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <SectionCards cardData={UserImpData} />
+      )}
+
 
       {/* Top controls */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 px-6">
@@ -243,11 +295,11 @@ const Users = () => {
             </td> */}
             <td className="px-4 py-3">
               <div className="flex items-center gap-3">
-<img
-  src={user.avatar || `https://github.com/${user.username}.png`}
-  alt={user.username}
-  className="w-10 h-10 rounded-full object-cover"
-/>
+                <img
+                  src={user.avatar || `https://github.com/${user.username}.png`}
+                  alt={user.username}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
                 <div className="flex flex-col leading-tight">
                   <p className="text-sm font-semibold text-gray-900">{user.username}</p>
                   <p className="text-xs text-gray-500">{user.email}</p>
@@ -266,7 +318,7 @@ const Users = () => {
             <td className="px-6 py-3">{user.city || "Required"}</td>
             <td className="px-6 py-3">{user.gender || "Required"}</td>
             <td className="px-6 py-3 flex space-x-2 items-center h-full">
-            
+
 
               {/* Delete Button */}
               <button
@@ -285,7 +337,7 @@ const Users = () => {
 
 
                 }}
-                className="px-4 py-2 cursor-pointer bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 text-xs font-semibold shadow-sm transition-all active:scale-95"
+                className="px-3 py-1.5 cursor-pointer bg-gray-200 text-white-800 rounded hover:bg-gray-300 text-xs font-semibold transition"
               >
                 More
               </button>
@@ -329,13 +381,13 @@ const Users = () => {
                 <div className="px-6 flex-shrink-0">
                   <div className="flex items-end gap-4 -mt-10 mb-4">
                     <div className="relative">
-                     <img
-  src={
-    selectedUser.avatar || `https://github.com/${selectedUser.username}.png` || `https://ui-avatars.com/api/?name=${selectedUser.username}&background=random`
-  }
-  alt={selectedUser.username}
-  className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-md bg-gray-100 object-cover"
-/>
+                      <img
+                        src={
+                          selectedUser.avatar || `https://github.com/${selectedUser.username}.png` || `https://ui-avatars.com/api/?name=${selectedUser.username}&background=random`
+                        }
+                        alt={selectedUser.username}
+                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-md bg-gray-100 object-cover"
+                      />
 
                       <span className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
                     </div>
@@ -367,81 +419,236 @@ const Users = () => {
                     </DialogTitle>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                        <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Phone</p>
+
+                      {/* Phone */}
+                      <div
+                        className={`p-3 rounded-xl border transition-all
+      ${isEditing
+                            ? "bg-white border-blue-300 ring-1 ring-blue-100"
+                            : "bg-gray-50 border-gray-200"
+                          }
+    `}
+                      >
+                        <p
+                          className={`text-[10px] font-bold uppercase mb-1
+        ${isEditing ? "text-blue-600" : "text-gray-400"}
+      `}
+                        >
+                          Phone
+                        </p>
+
                         <input
                           {...register("phone", {
                             required: "Phone is required",
                             minLength: { value: 10, message: "Minimum 10 digits" }
                           })}
                           readOnly={!isEditing}
-                          className="w-full bg-transparent outline-none text-sm"
+                          placeholder={isEditing ? "Enter phone number" : ""}
+                          className={`w-full bg-transparent outline-none text-sm transition-colors
+        ${isEditing
+                              ? "text-gray-900 placeholder:text-gray-400"
+                              : "text-gray-500 cursor-not-allowed"
+                            }
+      `}
                         />
-                        {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone.message}</p>}
+
+                        {errors.phone && (
+                          <p className="text-xs text-red-500 mt-1">{errors.phone.message}</p>
+                        )}
                       </div>
 
-                      <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                        <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Gender</p>
+                      {/* Gender */}
+                      <div
+                        className={`p-3 rounded-xl border transition-all
+      ${isEditing
+                            ? "bg-white border-blue-300 ring-1 ring-blue-100"
+                            : "bg-gray-50 border-gray-200"
+                          }
+    `}
+                      >
+                        <p
+                          className={`text-[10px] font-bold uppercase mb-1
+        ${isEditing ? "text-blue-600" : "text-gray-400"}
+      `}
+                        >
+                          Gender
+                        </p>
+
                         <input
                           {...register("gender", { required: "Gender is required" })}
                           readOnly={!isEditing}
-                          className="w-full bg-transparent outline-none text-sm"
+                          placeholder={isEditing ? "Enter gender" : ""}
+                          className={`w-full bg-transparent outline-none text-sm transition-colors
+        ${isEditing
+                              ? "text-gray-900 placeholder:text-gray-400"
+                              : "text-gray-500 cursor-not-allowed"
+                            }
+      `}
                         />
-                        {errors.gender && <p className="text-xs text-red-500 mt-1">{errors.gender.message}</p>}
+
+                        {errors.gender && (
+                          <p className="text-xs text-red-500 mt-1">{errors.gender.message}</p>
+                        )}
                       </div>
 
-                      <div className="sm:col-span-2 p-3 rounded-xl bg-gray-50 border border-gray-100">
-                        <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Email</p>
+                      {/* Email */}
+                      <div
+                        className={`sm:col-span-2 p-3 rounded-xl border transition-all
+      ${isEditing
+                            ? "bg-white border-blue-300 ring-1 ring-blue-100"
+                            : "bg-gray-50 border-gray-200"
+                          }
+    `}
+                      >
+                        <p
+                          className={`text-[10px] font-bold uppercase mb-1
+        ${isEditing ? "text-blue-600" : "text-gray-400"}
+      `}
+                        >
+                          Email
+                        </p>
+
                         <input
                           {...register("email", {
                             required: "Email is required",
                             pattern: { value: /^\S+@\S+$/i, message: "Invalid email" }
                           })}
                           readOnly={!isEditing}
-                          className="w-full bg-transparent outline-none text-sm"
+                          placeholder={isEditing ? "Enter email address" : ""}
+                          className={`w-full bg-transparent outline-none text-sm transition-colors
+        ${isEditing
+                              ? "text-gray-900 placeholder:text-gray-400"
+                              : "text-gray-500 cursor-not-allowed"
+                            }
+      `}
                         />
-                        {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
+
+                        {errors.email && (
+                          <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+                        )}
                       </div>
+
                     </div>
+
                   </section>
 
                   {/* LOCATION */}
                   <section>
-                    <DialogTitle className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2 sticky top-0 bg-white py-1">
-                      <MapPin className="w-3 h-3 text-indigo-500" />
+                    <DialogTitle className="text-[11px] font-bold text-gray-800 uppercase tracking-widest mb-3 flex items-center gap-2 sticky top-0 bg-white py-1">
+                      <MapPin className="w-3 h-3 text-gray-800" />
                       Location Info
                     </DialogTitle>
 
-                    <div className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                      <p className="text-sm text-gray-600 font-medium">Address</p>
+                    <div
+                      className={`p-3 rounded-xl border transition-all
+    ${isEditing
+                          ? "bg-white border-blue-300 ring-1 ring-blue-100"
+                          : "bg-gray-50 border-gray-200"
+                        }
+  `}
+                    >
+                      <p
+                        className={`text-xs font-semibold mb-1
+      ${isEditing ? "text-blue-600" : "text-gray-400"}
+    `}
+                      >
+                        Address
+                      </p>
+
                       <input
                         {...register("address", { required: "Address is required" })}
                         readOnly={!isEditing}
-                        className="w-full bg-transparent outline-none text-sm"
+                        placeholder={isEditing ? "Enter address" : ""}
+                        className={`w-full bg-transparent outline-none text-sm transition-colors
+      ${isEditing
+                            ? "text-gray-900 placeholder:text-gray-400"
+                            : "text-gray-500 cursor-not-allowed"
+                          }
+    `}
                       />
-                      {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address.message}</p>}
+
+                      {errors.address && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.address.message}
+                        </p>
+                      )}
                     </div>
 
+
                     <div className="flex gap-3 mt-3">
-                      <div className="flex-1 p-3 rounded-xl bg-gray-50 border border-gray-100">
-                        <p className="text-sm text-gray-600 font-medium">City</p>
+                      <div
+                        className={`flex-1 p-3 rounded-xl border transition-all
+    ${isEditing
+                            ? "bg-white border-blue-300 ring-1 ring-blue-100"
+                            : "bg-gray-50 border-gray-200"
+                          }
+  `}
+                      >
+                        <p
+                          className={`text-xs font-semibold mb-1
+      ${isEditing ? "text-blue-600" : "text-gray-400"}
+    `}
+                        >
+                          City
+                        </p>
+
                         <input
                           {...register("city", { required: "City is required" })}
                           readOnly={!isEditing}
-                          className="w-full bg-transparent outline-none text-sm"
+                          placeholder={isEditing ? "Enter city" : ""}
+                          className={`w-full bg-transparent outline-none text-sm transition-colors
+      ${isEditing
+                              ? "text-gray-900 placeholder:text-gray-400"
+                              : "text-gray-500 cursor-not-allowed"
+                            }
+    `}
                         />
-                        {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city.message}</p>}
+
+                        {errors.city && (
+                          <p className="text-xs text-red-500 mt-1">
+                            {errors.city.message}
+                          </p>
+                        )}
                       </div>
 
-                      <div className="flex-1 p-3 rounded-xl bg-gray-50 border border-gray-100">
-                        <p className="text-sm text-gray-600 font-medium">Province</p>
+
+                      {/* Provinces */}
+
+                      <div
+                        className={`flex-1 p-3 rounded-xl border transition-all
+    ${isEditing
+                            ? "bg-white border-blue-300 ring-1 ring-blue-100"
+                            : "bg-gray-50 border-gray-200"
+                          }
+  `}
+                      >
+                        <p
+                          className={`text-xs font-semibold mb-1
+      ${isEditing ? "text-blue-600" : "text-gray-400"}
+    `}
+                        >
+                          Province
+                        </p>
+
                         <input
                           {...register("province", { required: "Province is required" })}
                           readOnly={!isEditing}
-                          className="w-full bg-transparent outline-none text-sm"
+                          className={`w-full bg-transparent outline-none text-sm transition-colors
+      ${isEditing
+                              ? "text-gray-900 placeholder:text-gray-400"
+                              : "text-gray-500 cursor-not-allowed"
+                            }
+    `}
+                          placeholder={isEditing ? "Enter province" : ""}
                         />
-                        {errors.province && <p className="text-xs text-red-500 mt-1">{errors.province.message}</p>}
+
+                        {errors.province && (
+                          <p className="text-xs text-red-500 mt-1">
+                            {errors.province.message}
+                          </p>
+                        )}
                       </div>
+
                     </div>
                   </section>
                 </div>

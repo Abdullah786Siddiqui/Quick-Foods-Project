@@ -22,8 +22,10 @@ exports.fetchAllUsers = async (req, res) => {
             }
             : {};
 
-        // Count total users matching search
-        const totalUsers = await User.countDocuments(searchCondition);
+        // Count total / Active / Inactive users matching search
+        const totalUsers = await User.countDocuments(); // total users in DB
+        const activeUsers = await User.countDocuments({ status: "active" });
+        const inactiveUsers = await User.countDocuments({ status: "inactive" });
 
         // Fetch users with pagination
         const users = await User.find(searchCondition)
@@ -62,10 +64,14 @@ exports.fetchAllUsers = async (req, res) => {
         res.status(200).json({
             users: usersWithLocations,
             pagination: {
-                totalUsers,
                 currentPage: page,
                 totalPages: Math.ceil(totalUsers / limit),
                 limit
+            },
+            stats:{
+                totalUsers,
+                activeUsers,
+                inactiveUsers,
             }
         });
 

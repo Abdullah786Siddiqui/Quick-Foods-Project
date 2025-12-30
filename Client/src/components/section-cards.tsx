@@ -1,10 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 
-import { 
-  Package,
-  CheckCircle,
-  AlertTriangle 
-} from "lucide-react"
+
 
 import {
   Card,
@@ -24,33 +20,10 @@ interface StatCardProps {
   bgColor: string; // Tailwind class for the background color (e.g., 'bg-fuchsia-100')
 }
 
-const cardData: StatCardProps[] = [
-  {
-    title: "Total Products",
-    value: 7,
-    Icon: Package,
-    detail: "+120 this month",
-    detailColor: "text-fuchsia-500",
-    bgColor: "bg-fuchsia-100",
-  },
-  {
-    title: "Completed",
-    value: 6,
-    Icon: CheckCircle,
-    detail: "34% of total",
-    detailColor: "text-green-500",
-    bgColor: "bg-green-100",
-  },
-  {
-    title: "Incomplete",
-    value: 7,
-    Icon: AlertTriangle,
-    detail: "128 need attention",
-    detailColor: "text-yellow-500",
-    bgColor: "bg-yellow-100",
-  },
-  // You can easily add more cards here
-];
+
+interface SectionCardsProps {
+  cardData: StatCardProps[];
+}
 
 // --- 2. Create a Reusable Card Component (Optional but Recommended) ---
 
@@ -82,7 +55,7 @@ function StatCard({
 
 // --- 3. Main Component Implementation ---
 
-export function SectionCards() {
+export function SectionCards({cardData ,} : SectionCardsProps) {
   // Cleaned up the wrapper div classes:
   // - Combined `gap-4`
   // - Removed redundant/misplaced global gradient/shadow classes (they should usually be on the Card component itself or a specific wrapper if needed globally)
