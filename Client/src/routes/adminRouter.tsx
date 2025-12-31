@@ -11,6 +11,7 @@ import ProtectedRoute from "./specialRoutes/protectedRoutes";
 import AdminAuthLayout from "@/layouts/admin_layout/auth/layout";
 import Menu from "@/pages/admin/Menu/menu";
 import Dashboard from "@/pages/admin/Dashboard/dashboard";
+import RestaurantDetail from "@/pages/admin/restaurant/restaurantDetail";
 
 export const adminRoutes = [
   {
@@ -39,6 +40,7 @@ export const adminRoutes = [
               { index: true, element: <Dashboard /> },
               { path: "users", element: <Users /> },
               { path: "restaurant", element: <Restaurant /> },
+              { path: "restaurant/detail/:id?", element: <RestaurantDetail /> },
               { path: "delivery", element: <Delivery /> },
               { path: "menu", element: <Menu /> },
 

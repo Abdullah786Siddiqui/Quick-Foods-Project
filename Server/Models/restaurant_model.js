@@ -13,10 +13,13 @@ const restaurantSchema = new Schema(
             unique: true,
 
         },
-         is_main: {
-    type: Boolean,
-    default: false
-  },
+         phone: {
+            type: String,
+            required: true,
+            unique: true,
+
+        },
+      
 
         image: {
             type: String,
@@ -46,9 +49,9 @@ const restaurantSchema = new Schema(
 
 // Restaurant model
 restaurantSchema.virtual("locations", {
-  ref: "RestaurantLocation",
-  localField: "_id",
-  foreignField: "restaurant_id"
+    ref: "RestaurantLocation",
+    localField: "_id",
+    foreignField: "restaurant_id"
 });
 
 restaurantSchema.set("toObject", { virtuals: true });
@@ -56,9 +59,9 @@ restaurantSchema.set("toJSON", { virtuals: true });
 
 
 // Cascade delete: Remove associated locations when a restaurant is deleted
-restaurantSchema.pre("deleteOne", { document: true, query: false }, async function(next) {
-  await RestaurantLocation.deleteMany({ restaurant_id: this._id });
-  next();
+restaurantSchema.pre("deleteOne", { document: true, query: false }, async function (next) {
+    await RestaurantLocation.deleteMany({ restaurant_id: this._id });
+    next();
 });
 
 

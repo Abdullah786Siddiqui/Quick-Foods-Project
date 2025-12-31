@@ -36,9 +36,7 @@ const DataTable = <T,>({
             {isPending ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i} className="bg-white border-b border-gray-200">
-                  <td className="px-4 py-3">
-                    <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
-                  </td>
+                 
 
                   <td className="px-6 py-3">
                     <div className="flex items-center gap-3">

@@ -1,7 +1,7 @@
 import usePageTitle from '@/hooks/usePageTitle';
 import DataTable from '@/components/data-table';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Mail, MapPin, Edit2, UserCheck, UserX, Package, CheckCircle, AlertTriangle } from "lucide-react";
+import { Mail, MapPin, Edit2, Package, CheckCircle, AlertTriangle } from "lucide-react";
 import api from '@/Api/api';
 import { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Input } from '@/components/shared/ui';
@@ -47,7 +47,6 @@ type StatusFilter = "All" | "active" | "inactive" | "blocked";
 const Users = () => {
   usePageTitle("User");
 
-  const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
   const [limit] = useState(5);
@@ -74,7 +73,7 @@ const Users = () => {
 
 
   const { data, isPending, isError } = useQuery({
-    queryKey: ['users', currentPage, statusFilter,statusFilter, debouncedSearch],
+    queryKey: ['users', currentPage, statusFilter, debouncedSearch],
     queryFn: async () => {
       const response = await api.get(`/admin/users?page=${currentPage}&limit=${limit}&search=${debouncedSearch}`);
 
@@ -159,9 +158,9 @@ const Users = () => {
 
     // 2. Check if there are any changes at all
     if (Object.keys(changedData).length === 0) {
+      toast.error("Nothing to update");
 
       setOpenDialog(false);
-      toast.error("Nothing to update");
       setIsEditing(false);// Showing error or info toast
       return; // Stop execution here
     }
@@ -318,18 +317,7 @@ const Users = () => {
             <td className="px-6 py-3">{user.city || "Required"}</td>
             <td className="px-6 py-3">{user.gender || "Required"}</td>
             <td className="px-6 py-3 flex space-x-2 items-center h-full">
-
-
-              {/* Delete Button */}
-              <button
-                className="px-3 py-1.5 cursor-pointer bg-red-100 text-red-800 rounded hover:bg-red-200 text-xs font-semibold transition"
-              >
-                Delete
-              </button>
-
-
-
-              <button
+               <button
                 onClick={() => {
                   setSelectedUser(user);  // set the clicked user
                   setOpenDialog(true)
@@ -341,6 +329,18 @@ const Users = () => {
               >
                 More
               </button>
+
+
+              {/* Delete Button */}
+              <button
+                className="px-3 py-1.5 cursor-pointer bg-red-100 text-red-800 rounded hover:bg-red-200 text-xs font-semibold transition"
+              >
+                Delete
+              </button>
+
+
+
+             
 
 
 

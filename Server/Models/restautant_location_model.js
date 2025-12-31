@@ -17,6 +17,10 @@ const restaurantLocationSchema = new Schema({
     ref: "Province",
     default: null
   },
+  is_main: {
+    type: Boolean,
+    default: false
+  },
   address: {
     type: String,
     default: null
@@ -35,7 +39,7 @@ const restaurantLocationSchema = new Schema({
     maxlength: 20,
     default: null
   },
- 
+
   latitude: {
     type: Number,
     default: null
@@ -57,7 +61,7 @@ restaurantLocationSchema.virtual("timings", {
 
 restaurantLocationSchema.set("toObject", { virtuals: true });
 restaurantLocationSchema.set("toJSON", { virtuals: true });
-restaurantLocationSchema.pre("deleteOne", { document: true, query: false }, async function(next) {
+restaurantLocationSchema.pre("deleteOne", { document: true, query: false }, async function (next) {
   await RestaurantTiming.deleteMany({ restaurant_location_id: this._id });
   next();
 });

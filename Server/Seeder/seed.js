@@ -130,24 +130,33 @@ const seed = async () => {
       {
         username: "FoodKing",
         email: "foodking@example.com",
+        phone : "03001234567",
         status: "active",
-        is_main: true,
         password: hashedPassword
       },
       {
         username: "BurgerHouse",
         email: "burgerhouse@example.com",
         status: "active",
+        phone : "03001112233",
+        password: hashedPassword
+      },
+      {
+        username: "KababHouse",
+        email: "kababhouse@example.com",
+        status: "active",
+        phone : "03001112933",
         password: hashedPassword
       }
     ]);
     console.log("Restaurants seeded.");
 
-    const RestaurantLocations= await RestaurantLocation.insertMany([
+    const RestaurantLocations = await RestaurantLocation.insertMany([
       {
         restaurant_id: restaurants[0]._id, // FoodKing
         city_id: cities[1]._id,            // Lahore
         province_id: provinces[1]._id,     // Punjab
+        is_main: true,
         address: "123 Main Street",
         locality: "Downtown",
         branch_email: "mainbranch@foodking.com",
@@ -159,6 +168,7 @@ const seed = async () => {
         restaurant_id: restaurants[0]._id, // FoodKing
         city_id: cities[0]._id,            // Karachi
         province_id: provinces[0]._id,     // Sindh
+        is_main: false,
         address: "456 Market Road",
         locality: "Clifton",
         branch_email: "branch2@foodking.com",
@@ -170,31 +180,77 @@ const seed = async () => {
         restaurant_id: restaurants[1]._id, // BurgerHouse
         city_id: cities[1]._id,            // Lahore
         province_id: provinces[1]._id,     // Punjab
+        is_main: true,
         address: "789 Burger Street",
         locality: "Gulberg",
         branch_email: "mainbranch@burgerhouse.com",
         branch_phone_number: "03001112233",
         latitude: 31.5210,
         longitude: 74.3590
-      }
+      },
+      {
+        restaurant_id: restaurants[2]._id, // KababHouse ✅
+        city_id: cities[1]._id,            // Lahore
+        province_id: provinces[1]._id,     // Punjab
+        is_main: true,
+        address: "789 Kabab Street",
+        locality: "Johar",
+        branch_email: "mainbranch@kababhouse.com",
+        branch_phone_number: "03001912233",
+        latitude: 31.5210,
+        longitude: 74.3590
+      },
+       {
+        restaurant_id: restaurants[0]._id, // FoodKing
+        city_id: cities[3]._id,          
+        province_id: provinces[3]._id,    
+        is_main: false,
+        address: "456 Bahadur Road", 
+        locality: "Defense",
+        branch_email: "branch3@foodking.com",
+        branch_phone_number: "03607654321",
+        latitude: 25.0150,
+        longitude: 67.0650
+      },
     ]);
 
-    console.log("RestaurantLocations seeded.");
 
+    console.log("RestaurantLocations seeded.");
     await RestaurantTiming.insertMany([
-  {
-    restaurant_location_id: RestaurantLocations[0]._id, // FoodKing Lahore branch
-    week_day: "Monday to Sunday",
-    opening_time: "09:00:00",
-    closing_time: "22:00:00"
-  },
-  {
-    restaurant_location_id: RestaurantLocations[1]._id, // BurgerHouse Lahore branch
-    week_day: "Monday to Sunday",
-    opening_time: "08:00:00",
-    closing_time: "21:00:00"
-  }
-]);
+      {
+        restaurant_location_id: RestaurantLocations[0]._id, // FoodKing Lahore
+        week_day: "Monday to Sunday",
+        opening_time: "09:00:00",
+        closing_time: "22:00:00"
+      },
+      {
+        restaurant_location_id: RestaurantLocations[1]._id, // FoodKing Karachi
+        week_day: "Monday to Sunday",
+        opening_time: "08:00:00",
+        closing_time: "21:00:00"
+      },
+      {
+        restaurant_location_id: RestaurantLocations[2]._id, // BurgerHouse Lahore
+        week_day: "Monday to Sunday",
+        opening_time: "08:00:00",
+        closing_time: "21:00:00"
+      },
+      {
+        restaurant_location_id: RestaurantLocations[3]._id, // KababHouse Lahore
+        week_day: "Monday to Sunday",
+        opening_time: "10:00:00",
+        closing_time: "23:00:00"
+      },
+       {
+        restaurant_location_id: RestaurantLocations[4]._id, // FoodKing Karachi
+        week_day: "Monday to Sunday",
+        opening_time: "08:00:00",
+        closing_time: "21:00:00"
+      },
+    ]);
+
+
+
     console.log("RestaurantTiming seeded.");
 
 
