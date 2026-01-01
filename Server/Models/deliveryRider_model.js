@@ -1,6 +1,8 @@
 const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
+const DeliveryRiderLocation = require('../Models/deliveryRider_location_model')
 
-const deliverySchema = new Schema(
+const deliveryRiderSchema = new Schema(
   {
     name: {
       type: String,
@@ -80,4 +82,28 @@ const deliverySchema = new Schema(
   }
 );
 
-module.exports = model("Delivery", deliverySchema);
+// Delivery Rider  model
+deliveryRiderSchema.virtual("location", {
+  ref: "DeliveryRiderLocation",
+  localField: "_id",
+  foreignField: "delivery_rider_id",
+  justOne: true, // 🔥 important
+});
+
+
+deliveryRiderSchema.set("toObject", { virtuals: true });
+deliveryRiderSchema.set("toJSON", { virtuals: true });
+
+deliveryRiderSchema.pre(
+  "deleteOne",
+  { document: true, query: false },
+  async function (next) {
+    await mongoose.model("DeliveryRiderLocation").deleteOne({
+      delivery_rider_id: this._id,
+    });
+    next();
+  }
+);
+
+
+module.exports = model("DeliveryRider", deliveryRiderSchema);

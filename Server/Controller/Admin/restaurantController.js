@@ -121,35 +121,6 @@ exports.fetchAllBranchRestaurants = async (req, res) => {
   }
 };
 
-// exports.fetchDetailsRestaurant = async (req, res) => {
-//   try {
-//     const restaurant_id = req.params.id;
-//     if (!restaurant_id) {
-//       return res.status(400).json({ message: "Restaurant ID is required" });
-//     }
-
-//     const restaurant = await Restaurant.findById(restaurant_id)
-//       .populate({
-//         path: "locations",
-//         match: { restaurant_id: restaurant_id }, 
-//         populate: {
-//           path: "timings",
-//         }
-//       })
-//       .lean();
-
-//     if (!restaurant) {
-//       return res.status(404).json({ message: "Restaurant not found" });
-//     }
-
-
-//     res.status(200).json({ restaurant });
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: error.message });
-//   }
-// }
 
 
 exports.fetcRestaurantDetails = async (req, res) => {

@@ -10,10 +10,12 @@ const City = require("../Models/city_model");
 const User = require("../Models/user_model");
 const UserLocation = require("../Models/user_location_model");
 const Admin = require("../Models/admin_model");
-const Delivery = require("../Models/delivery_model");
+const DeliveryRider = require("../Models/deliveryRider_model");
 const Restaurant = require("../Models/restaurant_model");
 const RestaurantLocation = require('../Models/restautant_location_model')
 const RestaurantTiming = require('../Models/restaurant_timing_model')
+const DeliveryRiderLocation = require('../Models/deliveryRider_location_model')
+
 
 const seed = async () => {
   try {
@@ -26,10 +28,12 @@ const seed = async () => {
     await User.deleteMany({});
     await UserLocation.deleteMany({});
     await Admin.deleteMany({});
-    await Delivery.deleteMany({});
+    await DeliveryRider.deleteMany({});
     await Restaurant.deleteMany({});
     await RestaurantLocation.deleteMany({});
     await RestaurantTiming.deleteMany({});
+    await DeliveryRiderLocation.deleteMany({});
+
 
 
     // 3️⃣ Seed Provinces
@@ -98,32 +102,79 @@ const seed = async () => {
     ]);
     console.log("Admin seeded.");
 
-    // 8️⃣ Seed Deliveries
-    await Delivery.insertMany([
-      {
-        name: "Ali",
-        email: "ali@example.com",
-        cnic: "12345-6789012-3",
-        phone_number: "03001112233",
-        dob: new Date("1995-01-01"),
-        vehical: "bike",
-        status: "active",
-        gender: "male",
-        password: hashedPassword
-      },
-      {
-        name: "Ahmed",
-        email: "ahmed@example.com",
-        cnic: "98765-4321098-7",
-        phone_number: "03004445566",
-        dob: new Date("1998-05-12"),
-        vehical: "cycle",
-        status: "active",
-        gender: "male",
-        password: hashedPassword
-      }
-    ]);
-    console.log("Deliveries seeded.");
+   // Seed Deliveries
+const DeliveryRiders = await DeliveryRider.insertMany([
+  {
+    name: "Ali",
+    email: "ali@example.com",
+    cnic: "12345-6789012-3",
+    phone_number: "03001112233",
+    dob: new Date("1995-01-01"),
+    vehical: "bike",
+    status: "active",
+    gender: "male",
+    password: hashedPassword,
+  },
+  {
+    name: "Ahmed",
+    email: "ahmed@example.com",
+    cnic: "98765-4321098-7",
+    phone_number: "03004445566",
+    dob: new Date("1998-05-12"),
+    vehical: "cycle",
+    status: "active",
+    gender: "male",
+    password: hashedPassword,
+  },
+  {
+    name: "Usman",
+    email: "usman@example.com",
+    cnic: "35201-1234567-9",
+    phone_number: "03007778899",
+    dob: new Date("1993-09-20"),
+    vehical: "bike",
+    status: "inactive",
+    gender: "male",
+    password: hashedPassword,
+  },
+]);
+
+console.log("✅ DeliveryPartners seeded");
+
+// Seed Delivery Locations (ONE TO ONE)
+await DeliveryRiderLocation.insertMany([
+  {
+    delivery_rider_id: DeliveryRiders[0]._id,
+    city_id: null,
+    province_id: null,
+    address: "Street 10, Gulshan-e-Iqbal",
+    locality: "Gulshan",
+    latitude: 24.9200,
+    longitude: 67.0900,
+  },
+  {
+    delivery_rider_id: DeliveryRiders[1]._id,
+    city_id: null,
+    province_id: null,
+    address: "Block B, Johar Town",
+    locality: "Johar Town",
+    latitude: 31.4697,
+    longitude: 74.2728,
+  },
+  {
+    delivery_rider_id: DeliveryRiders[2]._id,
+    city_id: null,
+    province_id: null,
+    address: "Satellite Town",
+    locality: "Rawalpindi",
+    latitude: 33.6430,
+    longitude: 73.0650,
+  },
+]);
+
+console.log("Delivery Rider  locations seeded");
+
+
 
     // 9️⃣ Seed Restaurants
     const restaurants = await Restaurant.insertMany([
