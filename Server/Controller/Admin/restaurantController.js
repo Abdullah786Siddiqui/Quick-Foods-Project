@@ -3,7 +3,7 @@ const RestaurantLocation = require("../../Models/restautant_location_model");
 const City = require("../../Models/city_model");
 const Province = require("../../Models/province_model");
 
-
+// Fetch Main Restaurant
 exports.fetchMainRestaurant = async (req, res) => {
 
   try {
@@ -66,38 +66,7 @@ exports.fetchMainRestaurant = async (req, res) => {
 
 };
 
-// exports.fetchAllBranchRestaurants = async (req, res) => {
-//   try {
-//     const restaurant_id = req.params.id;
-//     if (!restaurant_id) {
-//       return res.status(400).json({ message: "Restaurant ID is required" });
-//     }
-
-//     const restaurant = await Restaurant.findById(restaurant_id)
-//       .select("username email phone status image")
-//       .populate({
-//         path: "locations",
-//         match: { is_main: false },  // sirf branch locations
-//         select: "branch_email  branch_phone_number",
-//         populate: {
-//           path: "timings",
-//           select: "week_day opening_time closing_time"
-//         }
-//       })
-//       .lean();
-
-//     if (!restaurant) {
-//       return res.status(404).json({ message: "Restaurant not found" });
-//     }
-
-//     res.status(200).json({ restaurant });
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
+// Fetch Branches of Main Restaurant
 exports.fetchAllBranchRestaurants = async (req, res) => {
   try {
     const restaurant_id = req.params.id;
@@ -152,4 +121,62 @@ exports.fetchAllBranchRestaurants = async (req, res) => {
   }
 };
 
+// exports.fetchDetailsRestaurant = async (req, res) => {
+//   try {
+//     const restaurant_id = req.params.id;
+//     if (!restaurant_id) {
+//       return res.status(400).json({ message: "Restaurant ID is required" });
+//     }
 
+//     const restaurant = await Restaurant.findById(restaurant_id)
+//       .populate({
+//         path: "locations",
+//         match: { restaurant_id: restaurant_id }, 
+//         populate: {
+//           path: "timings",
+//         }
+//       })
+//       .lean();
+
+//     if (!restaurant) {
+//       return res.status(404).json({ message: "Restaurant not found" });
+//     }
+
+
+//     res.status(200).json({ restaurant });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: error.message });
+//   }
+// }
+
+
+exports.fetcRestaurantDetails = async (req, res) => {
+  try {
+    const locationId = req.params.id;
+
+    if (!locationId) {
+      return res.status(400).json({ message: "Location ID is required" });
+    }
+
+    const RestaurantDetails = await RestaurantLocation.findById(locationId)
+      .populate("restaurant_id") // Restaurant info
+      .populate("city_id")
+      .populate("province_id")
+      .populate({
+        path: "timings",
+      })
+      .lean();
+
+    if (!RestaurantDetails) {
+      return res.status(404).json({ message: "Location not found" });
+    }
+
+    res.status(200).json({ RestaurantDetails });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};

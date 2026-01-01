@@ -132,12 +132,14 @@ const seed = async () => {
         email: "foodking@example.com",
         phone : "03001234567",
         status: "active",
+        rating: 4.3,
         password: hashedPassword
       },
       {
         username: "BurgerHouse",
         email: "burgerhouse@example.com",
         status: "active",
+        rating: 3.3,
         phone : "03001112233",
         password: hashedPassword
       },
@@ -145,6 +147,7 @@ const seed = async () => {
         username: "KababHouse",
         email: "kababhouse@example.com",
         status: "active",
+        rating: 2.3,
         phone : "03001112933",
         password: hashedPassword
       }

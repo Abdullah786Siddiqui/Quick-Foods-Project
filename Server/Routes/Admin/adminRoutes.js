@@ -11,6 +11,7 @@ router.get('/users', checkJwtToken(['admin']), adminUserController.fetchAllUsers
 router.patch('/user/update/:id', checkJwtToken(['admin']), adminUserController.UpdateUser);
 router.get('/restaurants', checkJwtToken(['admin']), adminRestaurantController.fetchMainRestaurant);
 router.get('/restaurants/branches/:id', checkJwtToken(['admin']), adminRestaurantController.fetchAllBranchRestaurants);
+router.get('/restaurants/details/:id', checkJwtToken(['admin']), adminRestaurantController.fetcRestaurantDetails);
 
 
 

@@ -4,7 +4,7 @@ import DataTable from '@/components/data-table';
 import { SectionCards } from '@/components/section-cards'
 import usePageTitle from '@/hooks/usePageTitle';
 import { useQuery } from '@tanstack/react-query';
-import { X, MapPin, Phone, Building2, Pencil, Trash2 } from "lucide-react";
+import { Building2, Pencil, Trash2 } from "lucide-react";
 import { AlertTriangle, CheckCircle, HomeIcon } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Dialog, DialogContent, Input } from '@/components/shared/ui';
 import { useEffect, useState } from 'react';
@@ -46,14 +46,15 @@ const Restaurant = () => {
 
   interface Location {
     is_main: boolean;
+    _id : string;
+    branch_email: string;
+    branch_phone_number: string;
     timings: Timing[];
   }
 
   interface RestaurantData {
     _id: string;
     username: string;
-    branch_email: string;
-    branch_phone_number: string;
     image: string | null;
     email: string;
     status: "active" | "inactive" | "blocked";
@@ -242,7 +243,8 @@ const Restaurant = () => {
               {/* Actions */}
               <td className="px-4 py-3 flex gap-2 items-center mt-2 flex-nowrap ">
                 <Link
-                  to={`/admin/restaurant/detail/${restaurant._id}`}
+                  to={`/admin/restaurant/detail/${restaurant.locations?.[0]?._id}`}
+
                   className="px-2 py-1 cursor-pointer bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-xs font-semibold transition truncate"
                 >
                   Details
