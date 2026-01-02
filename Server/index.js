@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   // connect to database
   connectDB();
   console.log(`Quick Food app listening on port ${port}`);
