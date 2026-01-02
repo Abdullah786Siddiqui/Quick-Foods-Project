@@ -29,7 +29,7 @@ const UserLayout = () => {
 
       <div className="min-h-screen flex flex-col">
         {/* Header */}
-        {/* <header className="bg-blue-600 text-white p-4 flex flex-col sm:flex-row justify-between items-center shadow-md">
+         <header className="bg-blue-600 text-white p-4 flex flex-col sm:flex-row justify-between items-center shadow-md">
           <div className="flex items-center space-x-4 mb-2 sm:mb-0">
             <h1 className="text-2xl font-bold">User Dashboard</h1>
             <span className="bg-blue-500 px-3 py-1 rounded-full text-sm font-medium shadow-inner">
@@ -63,7 +63,7 @@ const UserLayout = () => {
 
 
 
-        </header> */}
+        </header> 
 
 
         {/* Content Area */}

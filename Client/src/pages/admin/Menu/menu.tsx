@@ -212,7 +212,6 @@ const Menu = () => {
       <Input
         type="file"
         accept="image/png, image/jpeg, image/svg+xml"
-        onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
         className="hidden"
         required
       />
@@ -236,7 +235,6 @@ const Menu = () => {
           variant="outline"
           onClick={() => {
             setShowAddForm(false);
-            setFormData({ name: "", image: null });
           }}
           className="border-border text-foreground hover:bg-muted/50 w-full sm:w-auto rounded-md px-6 py-2"
         >
@@ -418,7 +416,7 @@ const Menu = () => {
         </span>
         <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg bg-green-100 text-green-700 font-medium text-xs sm:text-sm">
           <Star className="w-3 h-3 sm:w-4 sm:h-5" />
-          {selectedCategoryData.rating || 4.5} rating
+          4.5 rating
         </span>
       </div>
     </div>
@@ -465,7 +463,7 @@ const Menu = () => {
                               />
                               {/* Badge */}
                               <span className="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded-md shadow">
-                                {item.badge || "New"}
+                                New
                               </span>
 
                             </div>
@@ -478,15 +476,15 @@ const Menu = () => {
                               {/* Rating Stars */}
                               <div className="flex items-center gap-1 text-yellow-400 text-xs">
                                 {[...Array(5)].map((_, i) => (
-                                  <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill={i < (item.rating || 4) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg key={i} xmlns="http://www.w3.org/2000/svg" className="h-3 w-3"  stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                                   </svg>
                                 ))}
-                                <span className="text-gray-500">({item.reviews || 20})</span>
+                                <span className="text-gray-500">  20</span>
                               </div>
 
                               {/* Description */}
-                              <p className="text-gray-500 text-xs line-clamp-2">{item.description || "Delicious food item made with fresh ingredients."}</p>
+                              <p className="text-gray-500 text-xs line-clamp-2">Delicious food item made with fresh ingredients</p>
 
                               {/* Price and Actions */}
                               <div className="flex items-center justify-between mt-1">

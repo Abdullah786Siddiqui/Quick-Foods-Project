@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react"
+// import type { LucideIcon } from "lucide-react"
 
 
 
@@ -11,19 +11,17 @@ import {
 
 // --- 1. Define Card Data (for better maintainability and scalability) ---
 
-interface StatCardProps {
-  title: string;
-  value: string | number;
-  Icon: LucideIcon; // Use the imported type for the icon component
-  detail: string;
-  detailColor: string; // Tailwind class for the color (e.g., 'text-fuchsia-500')
-  bgColor: string; // Tailwind class for the background color (e.g., 'bg-fuchsia-100')
-}
+// interface StatCardProps {
+//   title: string;
+//   value: string | number;
+//   Icon: LucideIcon; // Use the imported type for the icon component
+//   detail: string;
+//   detailColor: string; // Tailwind class for the color (e.g., 'text-fuchsia-500')
+//   bgColor: string; // Tailwind class for the background color (e.g., 'bg-fuchsia-100')
+// }
 
 
-interface SectionCardsProps {
-  cardData: StatCardProps[];
-}
+
 
 // --- 2. Create a Reusable Card Component (Optional but Recommended) ---
 
@@ -35,7 +33,7 @@ function StatCard({
   detail,
   detailColor,
   bgColor,
-}: StatCardProps) {
+}: any) {
   return (
     <Card className={bgColor}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -55,13 +53,13 @@ function StatCard({
 
 // --- 3. Main Component Implementation ---
 
-export function SectionCards({cardData ,} : SectionCardsProps) {
+export function SectionCards({cardData ,} : any) {
   // Cleaned up the wrapper div classes:
   // - Combined `gap-4`
   // - Removed redundant/misplaced global gradient/shadow classes (they should usually be on the Card component itself or a specific wrapper if needed globally)
   return (
     <div className="grid grid-cols-1 gap-4 px-4 lg:grid-cols-3 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-      {cardData.map((card) => (
+      {cardData.map((card : any) => (
         <StatCard 
           key={card.title} // A unique key is crucial when mapping
           {...card} 
