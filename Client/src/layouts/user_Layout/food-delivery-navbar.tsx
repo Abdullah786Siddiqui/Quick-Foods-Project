@@ -1,37 +1,10 @@
-// import { useState } from "react";
-// import toast from "react-hot-toast";
-import {  MapPin, Navigation } from "lucide-react";
-import { Outlet } from "react-router-dom";
+"use client"
 
-const UserLayout = () => {
-  // const navigate = useNavigate();
-  // const token = localStorage.getItem("user_token");
-  // const User = localStorage.getItem("user_auth");
-  // const username = token && User ? JSON.parse(User).user.name : 'Guest';
-  // const [loggingOut, setLoggingOut] = useState(false);
-  // const isAuthenticated = !!token;
-
-  // const handleLogout = () => {
-  //   setLoggingOut(true); // disable button
-  //   localStorage.removeItem('user_token');
-  //   localStorage.removeItem('user_auth');
-  //   toast.success('Logged out successfully!', {
-  //     style: { background: 'white', color: 'red' },
-  //   });
-  //   setTimeout(() => {
-  //     navigate('/');
-  //   }, 1000);
-  // }
-
+export default function FoodDeliveryNavbar() {
   return (
-    <>
-
-
-      <div className="min-h-screen flex flex-col">
-        {/* Header */}
-         <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
-      <div className="mx-auto ">
-        <div className="flex h-16 items-center justify-between gap-4 md:h-20 px-4 sm:px-6">
+    <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between gap-4 md:h-20">
           {/* Left Section: Logo (Desktop) / User Icon (Mobile) */}
           <div className="flex items-center gap-3 flex-shrink-0 md:flex-1 md:justify-start">
             {/* User Icon - Visible on Mobile Only */}
@@ -51,40 +24,47 @@ const UserLayout = () => {
 
             {/* Logo Section - Visible on Desktop Only */}
             <div className="hidden md:flex items-center gap-3">
-              <img src="/public/logo.png" alt="Quickfood" className="h-10 md:h-11 w-auto" />
+              <img src="/images/logo.png" alt="Quickfood" className="h-10 md:h-11 w-auto" />
             </div>
           </div>
 
           {/* Center Section: Logo (Mobile) */}
           <div className="flex md:hidden items-center">
-            <img src="/public/logo.png" alt="Quickfood" className="h-10 w-auto" />
+            <img src="/images/logo.png" alt="Quickfood" className="h-10 w-auto" />
           </div>
 
           {/* Center Section: Location (Hidden on Mobile) */}
-         
-
-<div className="hidden md:flex flex-1 max-w-2xl mx-auto">
-  <div className="flex w-full items-center gap-3 rounded-xl border border-orange-200 bg-gradient-to-r from-orange-50 to-orange-50/50 px-4 py-2.5 shadow-sm transition-all hover:border-orange-300 hover:shadow-md dark:border-orange-900/40 dark:from-orange-950/20 dark:to-orange-950/10">
-    
-    {/* Location Icon */}
-    <MapPin className="h-5 w-5 text-orange-500 flex-shrink-0" />
-
-    {/* Location Text */}
-    <div className="flex-1 min-w-0">
-      <div className="text-xs font-medium text-orange-600 dark:text-orange-400">Delivering to</div>
-      <div className="text-sm font-semibold text-slate-900 truncate dark:text-white">San Francisco, CA</div>
-    </div>
-
-    {/* Modal Trigger Icon */}
-    <Navigation className="h-5 w-5 text-orange-500 cursor-pointer hover:text-orange-600" />
-  </div>
-</div>
-
+          <div className="hidden md:flex flex-1 max-w-xs mx-auto">
+            <div className="flex w-full items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 dark:border-slate-700 dark:bg-slate-900">
+              <svg className="h-5 w-5 flex-shrink-0 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs text-slate-500 dark:text-slate-400">Delivering to</div>
+                <div className="text-sm font-semibold text-slate-900 truncate dark:text-white">San Francisco, CA</div>
+              </div>
+              <svg
+                className="h-4 w-4 flex-shrink-0 text-slate-400 dark:text-slate-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+          </div>
 
           {/* Right Section: Actions */}
           <div className="flex items-center gap-2 md:gap-4 flex-shrink-0 md:flex-1 md:justify-end">
             {/* Mobile Location Button (Visible only on Mobile) */}
-            {/* <button className="md:hidden flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs font-medium text-slate-900 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-800">
+            <button className="md:hidden flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs font-medium text-slate-900 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-800">
               <svg className="h-4 w-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
@@ -93,7 +73,7 @@ const UserLayout = () => {
                 />
               </svg>
               <span className="hidden sm:inline">SF</span>
-            </button> */}
+            </button>
 
             {/* Favorites Icon (Desktop Only) */}
             <button
@@ -146,39 +126,33 @@ const UserLayout = () => {
         </div>
 
         {/* Mobile Location Bar (Visible only on Mobile, below navbar) */}
-     
-
-<div className="md:hidden border-t border-slate-200 bg-slate-50 px-2 py-2 dark:border-slate-800 dark:bg-slate-900">
-  <div className="flex items-center gap-3 rounded-xl border border-orange-200 bg-gradient-to-r from-orange-50 to-orange-50/50 px-4 py-2 shadow-sm transition-all hover:border-orange-300 hover:shadow-md dark:border-orange-900/40 dark:from-orange-950/20 dark:to-orange-950/10">
-    
-    {/* Location Icon */}
-    <MapPin className="h-5 w-5 text-orange-500 flex-shrink-0" />
-
-    {/* Location Text */}
-    <div className="flex-1 min-w-0">
-      <div className="text-xs font-medium text-orange-600 dark:text-orange-400">Delivering to</div>
-      <div className="text-sm font-semibold text-slate-900 truncate dark:text-white">San Francisco, CA</div>
-    </div>
-
-    {/* Modal Trigger Icon */}
-    <Navigation className="h-5 w-5 text-orange-500 cursor-pointer hover:text-orange-600" />
-
-    {/* Optional Dropdown Icon */}
-    {/* <ChevronDown className="h-4 w-4 text-slate-400 dark:text-slate-500" /> */}
-  </div>
-</div>
-
+        <div className="md:hidden border-t border-slate-200 bg-slate-50 px-2 py-2 dark:border-slate-800 dark:bg-slate-900">
+          <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-800">
+            <svg className="h-5 w-5 flex-shrink-0 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs text-slate-500 dark:text-slate-400">Delivering to</div>
+              <div className="text-sm font-semibold text-slate-900 truncate dark:text-white">San Francisco, CA</div>
+            </div>
+            <svg
+              className="h-4 w-4 flex-shrink-0 text-slate-400 dark:text-slate-500"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+        </div>
       </div>
     </nav>
-
-
-        {/* Content Area */}
-        <main className="flex-1 bg-gray-100 p-6">
-          <Outlet />
-        </main>
-      </div>
-    </>
-  );
-};
-
-export default UserLayout;
+  )
+}
