@@ -9,7 +9,7 @@ import AdminLogin from "@/layouts/admin_layout/auth/login";
 import PrivateRoute from "./specialRoutes/privateRoutes";
 import ProtectedRoute from "./specialRoutes/protectedRoutes";
 import AdminAuthLayout from "@/layouts/admin_layout/auth/layout";
-import Menu from "@/pages/admin/Menu/menu";
+// import Menu from "@/pages/admin/Menu/menu";
 import Dashboard from "@/pages/admin/Dashboard/dashboard";
 import RestaurantDetail from "@/pages/admin/restaurant/restaurantDetail";
 

@@ -1,6 +1,6 @@
 import usePageTitle from '@/hooks/usePageTitle';
 import DataTable from '@/components/data-table';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Mail, MapPin, Edit2, Package, CheckCircle, AlertTriangle } from "lucide-react";
 import api from '@/Api/api';
 import { useState, useEffect } from 'react';
