@@ -173,7 +173,7 @@ const UserLayout = () => {
 
 
         {/* Content Area */}
-        <main className="flex-1 bg-gray-100 p-6">
+        <main  >
           <Outlet />
         </main>
       </div>
