@@ -2,11 +2,12 @@
 import UserLogin from "@/layouts/user_Layout/auth/login";
 import UserSignup from "@/layouts/user_Layout/auth/signup";
 import UserLayout from "@/layouts/user_Layout/app";
-import UserHome from "@/pages/user/home/home";
 import Checkout from "@/pages/user/checkout/checkout";
 import PrivateRoute from "./specialRoutes/privateRoutes";
 import ProtectedRoute from "./specialRoutes/protectedRoutes";
 import UserAuthLayout from "@/layouts/user_Layout/auth/layout";
+import UserLocation from "@/pages/user/home/UserLocation";
+import UserHome from "@/pages/user/home/home";
 
 export const userRoutes = [
   {
@@ -27,7 +28,9 @@ export const userRoutes = [
         // Public Routes Any User Authenticated or not
         element: <UserLayout />,
         children: [
-         { index: true, element: <UserHome /> },
+         { index: true, element: <UserLocation /> },
+         { path: '/home', element: <UserHome /> },
+
           {
             // Private Routes Any User Authenticated  or not
             element: <PrivateRoute route=""  role="user"/> 
