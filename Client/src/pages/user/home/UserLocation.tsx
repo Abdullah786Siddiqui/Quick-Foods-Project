@@ -1,9 +1,10 @@
-import { setUserLocation } from "@/store/locationSlice";
+import { setUserLocation } from "@/store/slices/locationSlice";
 import { LocateFixed, OctagonX } from "lucide-react";
-import { useState } from "react";
+import {  useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 
 const UserLocation = () => {
 
@@ -16,6 +17,8 @@ const UserLocation = () => {
   const [findloading, setfindloading] = useState(false)
   const navigate = useNavigate();
   const dispatch = useDispatch()
+
+
 
   const handleLocateMe = () => {
     if (!navigator.geolocation) {
@@ -118,6 +121,9 @@ const UserLocation = () => {
   };
 
   return (
+    <>
+
+    
     <div className="relative w-full h-[360px] sm:h-[400px] lg:h-[450px] overflow-hidden">
       <img
         src="/banner/main.png"
@@ -198,6 +204,9 @@ const UserLocation = () => {
         </div>
       </div>
     </div>
+
+ 
+</>
   );
 };
 
